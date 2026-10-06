@@ -1,0 +1,3415 @@
+{
+ "abaskohi2026sekv": {
+  "key": "abaskohi2026sekv",
+  "short_name": "SeKV",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": false,
+  "operation": "route spans, low-rank",
+  "ops": [
+   "W",
+   "A"
+  ],
+  "currency": "entries",
+  "grades": {
+   "capacity": "-",
+   "addressing": "I",
+   "interference": "-",
+   "write": "I"
+  },
+  "findings": [
+   {
+    "name": "Best compressed method in 20/20 settings, +5.9% over SentenceKV at 10% KV budget",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Remaining gap to full KV, largest on retrieval-sensitive NIAH and RULER",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Eviction baselines (StreamingLLM, H2O, SnapKV) lose far more at the same budget",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Expanded spans rebuilt only up to retained SVD rank; coarse mean for non-expanded spans",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Zoom-in is sparse and concentrated in mid-to-late-layer heads",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   }
+  ],
+  "basis": "Spans, summaries and SVD factors are written from surprisal before any query, so the writer is query-agnostic; the query-dependent zoom gate is a read-side addressing step. No ablation separates routing misses from low-rank write error, so Addressing and Write are I, and the gap to full KV (and the comparison with eviction) is Unassigned (Addressing, Write distortion).",
+  "read": "full text"
+ },
+ "ajewska2025understanding": {
+  "key": "ajewska2025understanding",
+  "short_name": "Łajewska et al.",
+  "kind": "analysis",
+  "substrate": "several",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": false,
+  "operation": "probe prompt compression",
+  "ops": [
+   "W"
+  ],
+  "currency": "tokens",
+  "grades": {
+   "capacity": "-",
+   "addressing": "-",
+   "interference": "-",
+   "write": "I"
+  },
+  "findings": [
+   {
+    "name": "Soft tokens keep topic but lose dates and numbers; reconstruction hallucinates facts",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Compression sharply lowers grounding (FABLES), most for xRAG",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Two-step, sentence-level xRAG training raises entity preservation and HotpotQA EM by up to 23%",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "PISCO preserves much more information than xRAG at similar compression",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "All methods lose about half of multi-hop HotpotQA EM",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Compressed GSM8K examples do worse than no examples",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "The paper trains its own xRAG variants, and every compressor it evaluates encodes documents without the query, so it has a writer and is query-agnostic. Reconstruction probes point to Write distortion, but they are confounded with how the decoder reads and are not compared at equal compression ratios, so Write is I. The HotpotQA and GSM8K drops are Unassigned (Write distortion vs residual or interference).",
+  "read": "full text"
+ },
+ "an2024effective": {
+  "key": "an2024effective",
+  "short_name": "STRING",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "shift relative positions",
+  "ops": [
+   "A",
+   "R"
+  ],
+  "currency": "none",
+  "grades": {
+   "capacity": "-",
+   "addressing": "I",
+   "interference": "-",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "Long-distance relative positions are rarely seen in pretraining (i≥1536 under 5% of indices at L=2048)",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Effective context length follows position frequency, not maximum training length",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Distant needles are not retrieved; failures concentrate in the first L/3 of the document across 13 models",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "STRING raises 4-needle NIAH (85.7 vs 67.8 RoPE) and RULER at 128K (Llama3.1-70B 66.6 to 81.7; Qwen2-72B 53.7 to 84.6), while YaRN, DCA, Self-Extend and ReRoPE do not help within the training length",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "On InfiniteBench, Llama3.1-70B with STRING (56.88) beats GPT-4 (55.69)",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "At least the last third of position indices can be overwritten without loss",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   }
+  ],
+  "basis": "STRING reads the full uncompressed context, which is written with no query filtering (query-agnostic, no budget), and changes only the query position ids while all content stays fixed. That is positional under-use, so Addressing. The notes come from a full-text reading, so the abstract-only cap does not apply, but Addressing is still graded I because the intervention shifts positions for all tokens and there is no count-matched sham that raises access to non-answer content.",
+  "read": "full text"
+ },
+ "arora2023zoology": {
+  "key": "arora2023zoology",
+  "short_name": "Zoology",
+  "kind": "theory",
+  "substrate": "architecture",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "associative recall bound",
+  "ops": [
+   "S"
+  ],
+  "currency": "rank or state dimension",
+  "grades": {
+   "capacity": "B",
+   "addressing": "U",
+   "interference": "-",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "Gated convolutions need model dimension d ≥ N to solve Mqar; attention does not",
+    "term": "capacity",
+    "failure_mode": "Capacity saturation"
+   },
+   {
+    "name": "Required recurrent state dimension grows with the number of key-value pairs to recall",
+    "term": "capacity",
+    "failure_mode": "Capacity saturation"
+   },
+   {
+    "name": "AR hits explain 82% of the perplexity gap to attention, worst on rare bigrams",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "RWKV degrades as the number of queries grows",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Sparse input-dependent attention closes 72–85% of the AR gap",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "As the reviewer says, this is a fixed-state bound on the sequence model itself, like Jelassi et al., so the substrate is architecture, there is no writer, and there is no reuse flag. Capacity is B from the Mqar dimension result. The Pile perplexity gaps are measured errors of real systems that confound capacity with input-dependent routing, so they are Unassigned.",
+  "read": "full text"
+ },
+ "barrett2023h2o": {
+  "key": "barrett2023h2o",
+  "short_name": "H2O",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "proxy-query",
+  "multi_query_reuse": false,
+  "operation": "evict by attention",
+  "ops": [
+   "S",
+   "A"
+  ],
+  "currency": "entries",
+  "grades": {
+   "capacity": "U",
+   "addressing": "U",
+   "interference": "-",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "Evicted entries become permanently inaccessible; accumulated score biased toward the least recent tokens",
+    "term": "addressing",
+    "failure_mode": "Addressing drift and staleness"
+   },
+   {
+    "name": "At a 20% budget H2O nearly matches full cache while recency-only eviction collapses",
+    "term": "addressing",
+    "failure_mode": "Addressing drift and staleness"
+   },
+   {
+    "name": "Sink-plus-recent streaming loses mid-context information",
+    "term": "addressing",
+    "failure_mode": "Addressing drift and staleness"
+   },
+   {
+    "name": "Masking heavy hitters drastically hurts accuracy",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Recency-only eviction degenerates generated text",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "H2O scores entries with attention from past queries, so it is proxy-query. Its comparison with recency-only eviction falls under rule 5 with no item-by-item or count-matched control, so Addressing is I (confound: it may win by dropping competitors). Write is '-' (the reviewer is right: retained entries are unaltered). The greedy guarantee is for a submodular surrogate, not a capacity bound.",
+  "read": "full text"
+ },
+ "behnam2025empiric": {
+  "key": "behnam2025empiric",
+  "short_name": "EMPIRIC",
+  "kind": "analysis",
+  "substrate": "native KV entries",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "oracle token selection",
+  "ops": [
+   "S",
+   "A"
+  ],
+  "currency": "tokens",
+  "grades": {
+   "capacity": "U",
+   "addressing": "U",
+   "interference": "-",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "Heuristic eviction loses substantial accuracy at strict budgets (e.g., 512 tokens)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Oracle analysis defines theoretical bounds on accuracy, compute and storage",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "Read only in abstract, so no cell can exceed I and Table 1 marks it. The oracle's writer class is unstated, so its bounds cannot serve as a Capacity bound for any query-knowledge class. Capacity and Addressing are therefore U (confounded), and there is no writer of its own.",
+  "read": "abstract"
+ },
+ "bennani2026systematic": {
+  "key": "bennani2026systematic",
+  "short_name": "Bennani and Moslonka",
+  "kind": "analysis",
+  "substrate": "external index",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "chunking budget sweep",
+  "ops": [
+   "W",
+   "A",
+   "R"
+  ],
+  "currency": "tokens",
+  "grades": {
+   "capacity": "-",
+   "addressing": "U",
+   "interference": "U",
+   "write": "U"
+  },
+  "findings": [
+   {
+    "name": "Quality declines beyond ~2.5k context tokens (context cliff)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Abstention falls with larger context budget and rises with chunk size",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Sentence and semantic chunking tie; token chunking lags; code chunking worst",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "20% overlap gives no quality gain but 1.25× more chunks",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "An end-to-end sweep of several chunkers with no writer of its own. Raising the context budget adds both answer-bearing chunks and distractors, and changing the chunking alters both what is stored and what is retrieved. Every finding therefore confounds Addressing, Interference and Write (U), and Section 5 may cite the context cliff only as Unassigned. No task bound exists: capacity floor unknown.",
+  "read": "full text"
+ },
+ "bui2026make": {
+  "key": "bui2026make",
+  "short_name": "DBTrimKV",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": true,
+  "operation": "learned global eviction",
+  "ops": [
+   "S",
+   "A",
+   "R"
+  ],
+  "currency": "entries",
+  "grades": {
+   "capacity": "-",
+   "addressing": "-",
+   "interference": "I",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "Near-tie distractors drive attention mass on useful tokens toward zero (Proposition 3.1)",
+    "term": "interference",
+    "failure_mode": "Read-time crosstalk and dilution"
+   },
+   {
+    "name": "Eviction matches or beats full-cache inference on VLM reasoning, MMDU and LongBench-v2",
+    "term": "interference",
+    "failure_mode": "Read-time crosstalk and dilution"
+   }
+  ],
+  "basis": "The retention score is computed once from the token embedding when the token enters the cache, so the writer is query-agnostic; the cache serves later turns in multi-turn dialogue (reuse flag). Proposition 3.1 is an argument about softmax dilution, not a bound on this system's loss, and no ablation isolates dilution, so Interference is I. The wins over heuristics fall under rule 5 without controls, so Addressing is I.",
+  "read": "full text"
+ },
+ "cao2026separating": {
+  "key": "cao2026separating",
+  "short_name": "ThreeH",
+  "kind": "theory",
+  "substrate": "several",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "define memory horizons",
+  "ops": [
+   "S",
+   "A"
+  ],
+  "currency": "several",
+  "grades": {
+   "capacity": "U",
+   "addressing": "I",
+   "interference": "-",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "Stability horizon unbounded while access and utility horizons are finite (constructive)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Attention sinks keep local modeling but not content beyond the active cache",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Recurrent and retrieval state extend the semantic horizon",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Anchor tokens should not be treated as semantic memory",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "Read in abstract only, so no cell can be above I. The construction does not bound the best store, so content lost beyond the cache is Unassigned (Capacity, Addressing). The contract spans KV, recurrent and retrieval state, so the substrate is 'several' and the study defines no writer.",
+  "read": "abstract"
+ },
+ "chen2023benchmarking": {
+  "key": "chen2023benchmarking",
+  "short_name": "RGB",
+  "kind": "benchmark",
+  "substrate": "external index",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "benchmark",
+  "ops": [
+   "A",
+   "R"
+  ],
+  "currency": "retrieved items (k)",
+  "grades": {
+   "capacity": "-",
+   "addressing": "U",
+   "interference": "U",
+   "write": "I"
+  },
+  "findings": [
+   {
+    "name": "Accuracy drops as noise ratio rises to 0.8 (five documents fixed)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Weak negative rejection when no answer-bearing document is present",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Strict vs judged rejection gap (instruction following; residual)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Poor multi-document integration, worse with noise",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Complex questions degrade at lower noise ratios",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Integration errors: merging, ignoring, misalignment (residual)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Counterfactual retrieved documents override correct knowledge, rarely detected",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Noise errors from long-distance info, evidence uncertainty, concept confusion",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "Raising the noise ratio also lowers the number of positive documents among the fixed five, and no similarity-matched control exists. So noise losses are Unassigned (Addressing, Interference), and the Sec. 5 table row must say Unassigned, not crosstalk. Passages come from a retrieval index (external index). Counterfactual documents are altered stored items (rule 4), graded I because the study compares them with parametric answers, not with correct documents.",
+  "read": "full text"
+ },
+ "colaco2026keep": {
+  "key": "colaco2026keep",
+  "short_name": "Colaco et al.",
+  "kind": "theory",
+  "substrate": "several",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "rate-distortion bound",
+  "ops": [
+   "W",
+   "S"
+  ],
+  "currency": "several",
+  "grades": {
+   "capacity": "B",
+   "addressing": "U",
+   "interference": "-",
+   "write": "I"
+  },
+  "findings": [
+   {
+    "name": "Fano bound: every layer errs below the task information requirement",
+    "term": "capacity",
+    "failure_mode": "Capacity saturation"
+   },
+   {
+    "name": "Query-agnostic operator pays a budget penalty of about H(Q)",
+    "term": "capacity",
+    "failure_mode": "Capacity saturation"
+   },
+   {
+    "name": "All KV-eviction methods collapse on needle retrieval below ~25% budget",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Experiment 1 scale (1,395 generations) with full cache accuracy 1.00",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Irreversible summarization loses about half the facts under repeated compaction; reversible memory holds near 0.95",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Reversible and irreversible operators diverge only when compaction repeats",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "No benchmark measures repeated-compaction degradation or cross-layer budgets",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Near-lossless on easy tasks, failing on high-information tasks",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Practical compressibility far exceeds worst-case bounds",
+    "term": "capacity",
+    "failure_mode": "Capacity saturation"
+   }
+  ],
+  "basis": "The Fano bound and the B−H(Q) penalty give Capacity B. The eviction collapse is not compared against the bound, so it is Unassigned (Capacity, Addressing), and Addressing is therefore U rather than '-'. Interference stays '-' because no result involves competitors. The summarization drift under repeated compaction is our inference (I), since the operators differ in more than write fidelity.",
+  "read": "full text"
+ },
+ "cuconasu2024power": {
+  "key": "cuconasu2024power",
+  "short_name": "Power of Noise",
+  "kind": "analysis",
+  "substrate": "external index",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "inject distractor passages",
+  "ops": [
+   "A",
+   "R"
+  ],
+  "currency": "retrieved items (k)",
+  "grades": {
+   "capacity": "-",
+   "addressing": "M",
+   "interference": "I",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "One distracting passage sharply cuts accuracy; more distractors degrade progressively",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "Hard-negative retriever (ADORE) distractors also degrade accuracy",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "Gold position near > far > mid with distractors present",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Random passages near gold can improve accuracy (oracle)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Filling context with random passages after retrieved ones helps (realistic)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Gains persist with Reddit text and random words",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "BM25 retrieves more answer-containing passages than Contriever at each k",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Retrieving 3-5 passages is optimal",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Random passages triple attention entropy",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "Distracting and random passages are compared at the same count with the gold passage and its position fixed. That is the ledger's replace-with-dissimilar test, so Interference is M, and the Sec. 5 line 'suggestive but undecomposed' must be revised. Addressing M rests on the direct answer-in-top-k measurement for BM25 vs Contriever. The position effect is measured only with distractors present and has no sham control, so it stays Unassigned.",
+  "read": "full text"
+ },
+ "ding2026controlled": {
+  "key": "ding2026controlled",
+  "short_name": "CMI",
+  "kind": "benchmark",
+  "substrate": "natural-language text",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "controlled memory interference",
+  "ops": [
+   "A",
+   "R"
+  ],
+  "currency": "retrieved items (k)",
+  "grades": {
+   "capacity": "-",
+   "addressing": "I",
+   "interference": "M",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "Memory scale alone gives limited, non-monotonic change",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Relationship type, not count, drives lexical failure (same-slot −0.50)",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "Dense retrieval sensitive to semantic crowding",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "Dense same-slot conflict also degrades stability (0.92 to 0.54)",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "Lexical same-slot: target pushed out of top-3, P(A|T)=1.00",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "Dense same-slot fails at access and use (recall 0.54, adoption 0.741)",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "Update-authority framing, not recency, drives poisoning",
+    "term": "interference",
+    "failure_mode": "Read-time crosstalk and dilution"
+   },
+   {
+    "name": "Same-slot growth cuts lexical plasticity across external datasets",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "Pattern holds across dense encoders, magnitude encoder-dependent",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "CMI-augmented selector raises target recall and noisy-update success",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Trained selector does not transfer across embedding backends",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   }
+  ],
+  "basis": "Relationship types are swept at a fixed count with the target held fixed, which is the tie-break test, so the lexical access loss is Interference (key collision at access), not Addressing. The Sec. 8 'Addr (access)' label must change. The selector changes the read at a fixed store and k with no item-level control, so under rule 5 it is Addressing I, not M. The store is agent memory text written by scenarios, not by a system writer of the study's own.",
+  "read": "full text"
+ },
+ "esmat2026varrate": {
+  "key": "esmat2026varrate",
+  "short_name": "VarRate",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "proxy-query",
+  "multi_query_reuse": true,
+  "operation": "variable-rank KV compression",
+  "ops": [
+   "W",
+   "S"
+  ],
+  "currency": "rank or state dimension",
+  "grades": {
+   "capacity": "U",
+   "addressing": "U",
+   "interference": "-",
+   "write": "U"
+  },
+  "findings": [
+   {
+    "name": "Eviction-based selection collapses 11-15 points under query-agnostic reuse",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Nonzero rank for all tokens limits loss to 3.5-5.5 points under reuse",
+    "term": "addressing",
+    "failure_mode": "Addressing drift and staleness"
+   },
+   {
+    "name": "Within 0.8 points of uncompressed at 20% budget on LongBench",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Variable rank beats uniform-rank ablation",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Matches KVzip at about one-eighth prefill cost",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "Read in abstract only, so cells are at most I. The collapse when moving to query-agnostic reuse mixes a higher capacity floor with a worse policy, so it is Unassigned (Capacity, Addressing). Salience-based rank allocation is a proxy for the future queries the cache is reused for, so the writer is proxy-query with the reuse flag set.",
+  "read": "abstract"
+ },
+ "feng2025ada": {
+  "key": "feng2025ada",
+  "short_name": "Ada-KV",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "proxy-query",
+  "multi_query_reuse": false,
+  "operation": "allocate per-head budgets",
+  "ops": [
+   "S"
+  ],
+  "currency": "entries",
+  "grades": {
+   "capacity": "U",
+   "addressing": "I",
+   "interference": "-",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "Eviction loss bounded by evicted attention mass (Theorem 3.1)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Adaptive allocation minimizes the upper bound (Theorem 3.3)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Toy example: reallocation retains more attention mass (2.26 to 2.48)",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Ruler gains over SnapKV in question-agnostic setting",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Hard NIAH degrades at 80% budget without adaptive allocation",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Question-aware to question-agnostic causes large drop for every method",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Code insensitive to compression while QA and summarization degrade",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Gains persist at 70B scale",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Plug-in Ada-KV improves later eviction methods and beats trained head allocation",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Best alpha depends on budget",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   }
+  ],
+  "basis": "The reading notes are full text, so the reviewer's abstract-only concern does not apply. Gains at equal budget have no item-level evidence or count-matched control, so they are Addressing I under rule 5 (the possible confound is fewer competitors). The bounds cover the policy, not the best store, and the question-agnostic drop is a full-setting comparison, so both are Unassigned (Capacity, Addressing). Importance comes from observation-window queries standing in for the question, so the writer is proxy-query rather than query-aware.",
+  "read": "full text"
+ },
+ "garg2026qevict": {
+  "key": "garg2026qevict",
+  "short_name": "QEvict",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "proxy-query",
+  "multi_query_reuse": false,
+  "operation": "tiered quantized eviction",
+  "ops": [
+   "W",
+   "S"
+  ],
+  "currency": "several",
+  "grades": {
+   "capacity": "U",
+   "addressing": "U",
+   "interference": "-",
+   "write": "I"
+  },
+  "findings": [
+   {
+    "name": "Recoverable INT2 tier cuts permanently evicted attention mass (64.8% to 35.7%)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Window routing lowers Future Missed Mass and churn vs token eviction",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "INT2 keeps window ranking but attenuates attention mass (ratio 0.866)",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Importance drifts: policy windows re-enter far more often than oracle windows",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Re-entry occurs about 64 decoding steps after dropping",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Q-to-F promotion slightly lowers FMM and improves Q-tier fidelity (pilot)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "LongBench gains over eviction grow as budget tightens",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "RULER-32K at 20% within 2.4 points of Full-KV",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "GSM8K: eviction collapses at low budget; QEvict holds at 20%, not 10%",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "QEvict does not beat quantization baselines on GSM8K",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "System cost depends on attention backend",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "FMM and the drift measures use a full-cache reference with no best-store bound, so drift is Unassigned (Capacity, Addressing), as in the draft tables. INT2 fidelity is measured directly, but its task-level cost is not isolated, so Write is I. Windows are rescored with past decoding attention as a stand-in for future queries, so the writer is proxy-query. The byte budget trades entries against bits, so the currency is 'several'.",
+  "read": "full text"
+ },
+ "ge2023context": {
+  "key": "ge2023context",
+  "short_name": "ICAE",
+  "kind": "method",
+  "substrate": "latent/soft vectors",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": true,
+  "operation": "learn memory slots",
+  "ops": [
+   "W",
+   "S"
+  ],
+  "currency": "tokens",
+  "grades": {
+   "capacity": "U",
+   "addressing": "-",
+   "interference": "-",
+   "write": "M"
+  },
+  "findings": [
+   {
+    "name": "Near-lossless reconstruction up to ~300 tokens at k=128; degrades beyond 400",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Compression beyond 4x (k=64, 32) fails to retain context",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Perplexity penalty grows with compression ratio (+0.16/+0.32/+0.49)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Random text almost entirely lost (BLEU 0.2 vs 99.3)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Stronger base LLM loses less at the same 512->128 budget",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Pretraining at matched k reduces loss; pretrained 8x matches unpretrained 4x",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "QA gap to original context narrows as k grows",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Memory slots beat equal-length GPT-4 summary",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Concatenated spans work only after training on concatenation",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "Matched-k ablations (pretraining vs none, stronger base LLM) change only the writer at a fixed budget, so they isolate Write distortion (M). Losses that grow with length or ratio, including random text, stay Unassigned (Write distortion vs Capacity) because no bound exists, which matches the shared Section 6 row.",
+  "read": "full text"
+ },
+ "hooper2024kvquant": {
+  "key": "hooper2024kvquant",
+  "short_name": "KVQuant",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": false,
+  "operation": "quantize KV cache",
+  "ops": [
+   "W"
+  ],
+  "currency": "bits per entry",
+  "grades": {
+   "capacity": "U",
+   "addressing": "-",
+   "interference": "-",
+   "write": "M"
+  },
+  "findings": [
+   {
+    "name": "<0.02/<0.1/<0.5 PPL degradation at 4/3/2 bits with 1% outliers",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Per-channel keys fix outlier damage (7.05 vs 10.87); per-channel values fail (223)",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Pre-RoPE key quantization beats post-RoPE (6.23 vs 7.05)",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Per-vector outlier thresholds beat per-matrix",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "fp16 attention-sink token matters at 2 bits (23.34->9.59; 8.47->7.23)",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "RULER average falls 56.40->36.54 at 2 bits; MKey3 to 0",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Passkey retrieval degrades at 2 bits and 32K on 70B",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Uniform quantization beats KIVI recency window on full-context tasks",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Offline key calibration matches online once outliers removed",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   }
+  ],
+  "basis": "Matched-bit layout ablations change only how entries are quantized, so the stored item is altered but present (rule 4) and Write distortion is M. The loss is decided at write; Section 6's 'Write→Address' marks where it shows up, not a second decision point. No capacity bound is given (capacity floor unknown).",
+  "read": "full text"
+ },
+ "hoy2026continuous": {
+  "key": "hoy2026continuous",
+  "short_name": "CCM",
+  "kind": "method",
+  "substrate": "natural-language text",
+  "query_knowledge": "proxy-query",
+  "multi_query_reuse": false,
+  "operation": "rewrite memory each turn",
+  "ops": [
+   "W"
+  ],
+  "currency": "tokens",
+  "grades": {
+   "capacity": "-",
+   "addressing": "-",
+   "interference": "-",
+   "write": "I"
+  },
+  "findings": [
+   {
+    "name": "Untrained CCM lowers TerminalBench-2 success for 3 of 4 frontier models (-11.2, -18.0, -5.6 pp)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Memory stays frozen or stale, so agent repeats actions",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Memory records unexecuted operations as done",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "GRPO-only policies rarely update memory; distillation yields per-turn updates",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Distillation raises Qwen3-4B WebShop success 24.22%->86.72%",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Trained CCM trails full-history GRPO on Endless Terminals and Qwen3-8B WebShop",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Distillation without GRPO fails; memory tokens get no signal",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   }
+  ],
+  "basis": "The writer knows the task but not future observations, so it is proxy-query. Frozen memories are current values that were never written (rule 3 defers to rule 2), so they are Write distortion (omission), graded I because the evidence is qualitative. Success gains are Unassigned because distillation also trains the action policy, which confounds writing with reading.",
+  "read": "full text"
+ },
+ "hsieh2024ruler": {
+  "key": "hsieh2024ruler",
+  "short_name": "RULER",
+  "kind": "benchmark",
+  "substrate": "native KV entries",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "benchmark",
+  "ops": [
+   "A",
+   "R"
+  ],
+  "currency": "tokens",
+  "grades": {
+   "capacity": "-",
+   "addressing": "U",
+   "interference": "M",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "Near-perfect vanilla NIAH hides large length degradation",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Only half of models effective at 32K; GPT-4 effective 64K of 128K claimed",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "1M-claimed models effective at 16K or less",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Haystack full of similar distractor needles drops Yi ~40 points at fixed length",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "Increasing queries 1->8 drops ~15 points (incomplete multi-item retrieval)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Yi copies one-shot demonstration in CWE at 128K",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "QA approaches no-context baseline as distracting paragraphs extend context",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Aggregation degrades far faster than retrieval with length",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Abrupt drop beyond training length",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Non-Transformer models lag Transformer baseline",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "Swapping dissimilar filler for similar distractor needles at a fixed length, with the needle held fixed, is the ledger's Interference test, so Interference is M. Length-driven degradation mixes position, distractors, aggregation and residual reasoning, so Addressing is U and most findings are Unassigned. This fits the Section 4 sentence.",
+  "read": "full text"
+ },
+ "huang2025mitigate": {
+  "key": "huang2025mitigate",
+  "short_name": "TCR-QF",
+  "kind": "method",
+  "substrate": "natural-language text",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": true,
+  "operation": "extract and restore triples",
+  "ops": [
+   "W",
+   "S"
+  ],
+  "currency": "entries",
+  "grades": {
+   "capacity": "U",
+   "addressing": "-",
+   "interference": "-",
+   "write": "U"
+  },
+  "findings": [
+   {
+    "name": "29.1% EM and 15.5% F1 gains over GraphRAG competitors",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Restoring source sentences to triples raises EM 0.400->0.481 (2Wiki)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Query-driven feedback alone beats context restoration alone",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Query-driven feedback beats answer-driven feedback",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "KG grows and EM plateaus by round 8; most gain in round 1",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "By definition, triple extraction that drops context is Write distortion. But restoration adds source text and feedback retrieves raw passages, so neither gain separates Write distortion from Capacity: grade U, and the Section 1 sentence must be hedged to match Sections 6 and 7. The persistent KG is built by a query-agnostic extractor; QF is a per-query repair loop.",
+  "read": "full text"
+ },
+ "jelassi2024repeat": {
+  "key": "jelassi2024repeat",
+  "short_name": "Jelassi et al.",
+  "kind": "theory",
+  "substrate": "architecture",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "bound fixed-state copying",
+  "ops": [
+   "S"
+  ],
+  "currency": "rank or state dimension",
+  "grades": {
+   "capacity": "B",
+   "addressing": "-",
+   "interference": "M",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "GSSM copy error > 1-|S|/D^L (Theorem 2.7)",
+    "term": "capacity",
+    "failure_mode": "Capacity saturation"
+   },
+   {
+    "name": "Error > 1/2 when mem(S) < L log D - 1 (Corollary 2.8)",
+    "term": "capacity",
+    "failure_mode": "Capacity saturation"
+   },
+   {
+    "name": "Depth-2 transformer copy error below repeated n-gram probability (Theorem 2.3)",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "Transformer copying fails with duplicated n-grams of 5+ tokens",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "GSSMs fail on incompressible inputs; succeed when only a small summary is needed",
+    "term": "capacity",
+    "failure_mode": "Capacity saturation"
+   },
+   {
+    "name": "Pythia beats larger Mamba on phone-book retrieval and long-paragraph QA",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Transformers need 100x fewer samples and length-generalize with Hard-ALiBi",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "A bound on the fixed-state sequence model itself means architecture substrate, no writer, and Capacity B. The duplicated n-gram experiment raises competitor similarity at matched length with the target held fixed, so Interference is M (key collision). Pretrained Pythia vs Mamba comparisons are confounded and stay Unassigned.",
+  "read": "full text"
+ },
+ "jiang2023llmlingua": {
+  "key": "jiang2023llmlingua",
+  "short_name": "LLMLingua",
+  "kind": "method",
+  "substrate": "natural-language text",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": false,
+  "operation": "drop low-perplexity tokens",
+  "ops": [
+   "W",
+   "S"
+  ],
+  "currency": "tokens",
+  "grades": {
+   "capacity": "U",
+   "addressing": "U",
+   "interference": "-",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "20x GSM8K at 77.33 EM vs 78.85 full; Selective-Context 44.20 at 15x",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "5x compression slightly exceeds full-shot EM",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "BBH loses 8.5/13.2 EM at 5x/7x",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Removing iterative token compression drops EM to 72.93",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Removing budget controller or using random demo selection drops EM",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Distribution alignment gives small gain",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "All methods collapse at 25x-30x",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "GPT2-compressed prompts restore only partial reasoning",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "The draft's 'ungraded' label is replaced. Same-budget selection-policy ablations are Addressing I under rule 5, with the confound that the better policy may have won by dropping competitors (Interference). The abstractive GPT-4 baseline is Write distortion I. The 25x-30x budget sweep confounds Capacity, Addressing and Interference (Capacity U), as Section 8 states.",
+  "read": "full text"
+ },
+ "jiang2023longllmlingua": {
+  "key": "jiang2023longllmlingua",
+  "short_name": "LongLLMLingua",
+  "kind": "method",
+  "substrate": "natural-language text",
+  "query_knowledge": "query-aware",
+  "multi_query_reuse": false,
+  "operation": "question-aware token pruning",
+  "ops": [
+   "W",
+   "A"
+  ],
+  "currency": "tokens",
+  "grades": {
+   "capacity": "-",
+   "addressing": "U",
+   "interference": "U",
+   "write": "M"
+  },
+  "findings": [
+   {
+    "name": "Up to 21.4% gain on NaturalQuestions with ~4x fewer tokens",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Entropy-only compressors fall below zero-shot at 4x",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Reordering flattens lost-in-the-middle curve",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "BM25 pruning degrades as compression rises",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Removing question-aware coarse step drops ~30 points (Synth 53.0->18.0)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Subsequence recovery repairs fragmented entities (39.7->43.8 for LLMLingua)",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Compressed prompt beats ~30k-token original on LooGLE and MuSiQue",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "Hard prompt compression rewrites text, so the substrate is natural-language text (per reviewer). Reordering and question-aware pruning change both item access and the competitor set with no count-matched sham, so Addressing and Interference are U, as in the Section 4 table. Subsequence recovery leaves the compressed prompt fixed and repairs only altered entities, so it isolates Write distortion (M).",
+  "read": "full text"
+ },
+ "jiang2026anatomy": {
+  "key": "jiang2026anatomy",
+  "short_name": "Jiang et al.",
+  "kind": "analysis",
+  "substrate": "natural-language text",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "benchmark agent memory",
+  "ops": [
+   "W",
+   "R"
+  ],
+  "currency": "none",
+  "grades": {
+   "capacity": "-",
+   "addressing": "U",
+   "interference": "-",
+   "write": "I"
+  },
+  "findings": [
+   {
+    "name": "Weaker backbone raises format-error rate during memory writes (Nemori 17.91% vs 30.38%)",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Weaker backbone lowers answer score (Nemori 0.781 vs 0.447); write failure and retrieval/reading change together",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Failed writes silently corrupt long-term memory while short-term conversation stays fluent",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Maintenance lag leaves memory stale (current value not yet written, rule 2)",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "F1 vs LLM-judge rank divergence; polarity flip scores 0.857 F1 but 0.00 judge (evaluation confound, no loss term)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Most benchmarks fit in a 128k window, so they may not test memory",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "MemoryOS latency 32.4 s/turn and construction cost spread (efficiency, no loss term)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "It compares six existing systems and defines no writer of its own, so its query knowledge is not applicable and it carries no reuse flag. The format-error rate is our inferred meter of Write distortion (I), and the score drop across backbones stays Unassigned (Write distortion vs Addressing). Under rule 2, staleness from maintenance lag is a write omission.",
+  "read": "full text"
+ },
+ "kolawole2026epiphany": {
+  "key": "kolawole2026epiphany",
+  "short_name": "EpiKV",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "proxy-query",
+  "multi_query_reuse": false,
+  "operation": "evict by epiphany score",
+  "ops": [
+   "S",
+   "A"
+  ],
+  "currency": "entries",
+  "grades": {
+   "capacity": "-",
+   "addressing": "U",
+   "interference": "-",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "Finished generations under eviction are wrong about as often as with the full cache",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Most accuracy loss under eviction comes from looping to the length limit (addressing vs residual not separated)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Keeping more tokens by a fixed importance score worsens looping",
+    "term": "addressing",
+    "failure_mode": "Addressing drift and staleness"
+   },
+   {
+    "name": "Keeping tokens that recent queries point to stops looping",
+    "term": "addressing",
+    "failure_mode": "Addressing drift and staleness"
+   },
+   {
+    "name": "EpiKV matches or beats attention-based eviction at the same budget",
+    "term": "addressing",
+    "failure_mode": "Addressing drift and staleness"
+   }
+  ],
+  "basis": "We read only the abstract, so grades are capped at I. Addressing is I under rule 5 because there is no item-level or count-matched control: the better policy may win by dropping competitors. Looping is a reader symptom that eviction induces, and the abstract does not separate it from residual loss, so it stays Unassigned.",
+  "read": "abstract"
+ },
+ "laguna2026cartridges": {
+  "key": "laguna2026cartridges",
+  "short_name": "Cartridges++",
+  "kind": "method",
+  "substrate": "latent/soft vectors",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": true,
+  "operation": "distill KV prefix",
+  "ops": [
+   "W",
+   "A",
+   "R"
+  ],
+  "currency": "entries",
+  "grades": {
+   "capacity": "-",
+   "addressing": "I",
+   "interference": "M",
+   "write": "U"
+  },
+  "findings": [
+   {
+    "name": "Cartridges degrade off-context behaviour (MMLU, IFEval, contamination) more than full context",
+    "term": "interference",
+    "failure_mode": "Read-time crosstalk and dilution"
+   },
+   {
+    "name": "Cartridges fail to abstain, answering as if absent evidence were in the document",
+    "term": "interference",
+    "failure_mode": "Read-time crosstalk and dilution"
+   },
+   {
+    "name": "Moving query/answer position lowers interference only with the on-context gain (positional convention ruled out)",
+    "term": "interference",
+    "failure_mode": "Read-time crosstalk and dilution"
+   },
+   {
+    "name": "Longer training does not remove the degradation; multi-turn does not compound it",
+    "term": "interference",
+    "failure_mode": "Read-time crosstalk and dilution"
+   },
+   {
+    "name": "Eviction stays near no-context off-context but loses on-context fidelity",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Attention Matching sits between eviction and Cartridges",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Data mixing (gamma=0.01) cuts off-context interference; heavy mixing hurts fidelity (changes what is stored)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "kNN router accepts >90% on-context and rejects >90% off-context queries; residual rejections are routing errors",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   }
+  ],
+  "basis": "Comparing off-context queries against the no-context model isolates the perturbation, which the ledger counts as Interference, so it is graded M. The Cartridge is trained once via self-study, with no user query, and is reused across queries. Data mixing changes the write and the interference together, so Write is U, and the router's off-context gain is not assigned.",
+  "read": "full text"
+ },
+ "lam2026governing": {
+  "key": "lam2026governing",
+  "short_name": "SSGM",
+  "kind": "method",
+  "substrate": "natural-language text",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": true,
+  "operation": "govern memory writes",
+  "ops": [
+   "W",
+   "A"
+  ],
+  "currency": "none",
+  "grades": {
+   "capacity": "-",
+   "addressing": "-",
+   "interference": "-",
+   "write": "B"
+  },
+  "findings": [
+   {
+    "name": "Semantic drift from repeated lossy re-summarization strips nuance",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Preference intensification under iterative summarization (illustrative)",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Theorem 1: periodic reconciliation bounds drift by O(N·eps) instead of O(T·eps), assuming bounded per-step error",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Errors in evolving memory are cumulative (hypothesis, untested)",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Strict consistency gating rejects legitimate updates (ossification, rule 2)",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Retrieval latency grows with memory history (efficiency, cited)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Fully connected multi-agent topologies maximize leakage (cited)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "SSGM defines a write gate for agent memory that is written before future queries and read across turns, so it is query-agnostic with reuse. The paper reports no experiments, but its drift theorem formally bounds Write distortion, so Write is B, not M.",
+  "read": "full text"
+ },
+ "leng2024long": {
+  "key": "leng2024long",
+  "short_name": "Leng et al.",
+  "kind": "analysis",
+  "substrate": "external index",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "vary retrieved k",
+  "ops": [
+   "A",
+   "R"
+  ],
+  "currency": "retrieved items (k)",
+  "grades": {
+   "capacity": "-",
+   "addressing": "U",
+   "interference": "U",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "Retrieval recall rises monotonically with k but RAG accuracy rises then falls",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Recall at small k misses gold chunks (FinanceBench recall@1 0.097, @189 0.916)",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Many models collapse at long context (llama-3.1-8b 0.547 to 0.15); frontier models stay flat",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Failure types shift with length: refusals, summarizing instead of answering, safety-filter blocks",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Full long context per query costs far more than retrieval",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "It evaluates 20 readers on a standard RAG pipeline and defines no writer of its own. When k grows, positional under-use, dilution and residual behaviour (refusals, instruction drift) all change together, so the accuracy drop is Unassigned. The draft may cite the drop under dilution only as Unassigned (Addressing, Interference).",
+  "read": "full text"
+ },
+ "li2024snapkv": {
+  "key": "li2024snapkv",
+  "short_name": "SnapKV",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "proxy-query",
+  "multi_query_reuse": false,
+  "operation": "select by observation window",
+  "ops": [
+   "S",
+   "A"
+  ],
+  "currency": "entries",
+  "grades": {
+   "capacity": "-",
+   "addressing": "I",
+   "interference": "U",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "End-of-prompt observation window predicts generation-time attention",
+    "term": "addressing",
+    "failure_mode": "Addressing drift and staleness"
+   },
+   {
+    "name": "Important positions depend on the instruction; hit rates fall when it changes",
+    "term": "addressing",
+    "failure_mode": "Addressing drift and staleness"
+   },
+   {
+    "name": "Naive top-k fragments items (phone-number country code kept, rest hallucinated)",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Pooling improves retrieval in noisy key-value contexts at the same budget",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "SnapKV at 1024 beats H2O at 4096 on 11 of 16 LongBench tasks",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "LongBench near full cache; GovReport drops at 1024 (capacity floor unknown)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "200-document RAG gains +5.4% over full cache (keeping item vs dropping distractors not separated)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "3.6x speed and 8.2x memory gains at 16k",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "Under tightened rule 5, the pooling and H2O comparisons give no item-level eviction evidence and no count-matched control, so Addressing is I, not the M in the draft's Section 8 table. The 200-distractor gain may come from dropping competitors, so it is Unassigned (Addressing, Interference) rather than reduced Interference.",
+  "read": "full text"
+ },
+ "liang2026rope": {
+  "key": "liang2026rope",
+  "short_name": "Block-GTQ",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": false,
+  "operation": "allocate key bits",
+  "ops": [
+   "W"
+  ],
+  "currency": "bits per entry",
+  "grades": {
+   "capacity": "-",
+   "addressing": "I",
+   "interference": "-",
+   "write": "M"
+  },
+  "findings": [
+   {
+    "name": "Per-layer RoPE-logit MAE cut 32-80%, winning 367/367 layers vs uniform TQ-MSE at matched budget",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Softmax KL drops 3.3-4.6x and top-10 overlap rises vs uniform allocation",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Uniform allocation collapses NIAH at K2V2 (Llama 70.6 vs Block-GTQ 97.4; Qwen 0.0)",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "LongBench-EN at K2V2: 53.31 vs uniform 36.87",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Without fp16 buffer, R1-Llama-8B still loses ground (uniform V quantization)",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Calibration sensitivity far larger at 2 bits than 3 bits, consistent with the 4^-b law",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Symmetric Q+K energy score beats single-sided scores",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Half-width RoPE models gain less; KIVI can win on DS-V2-Lite",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Mixed-rate metadata lowers compression (3.24x vs 3.88x) but runs 1.34x faster than fp16 at 128K",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "The reading notes cite tables and appendices, and the record says full text, so the abstract-only concern is outdated and no cap applies. The draft's 'as reported in its abstract' should be dropped. Matched-budget allocation changes only stored precision, so Write distortion is M (rule 4). The 4^-b rate law describes the quantizer, not a capacity bound, so the capacity floor is unknown.",
+  "read": "full text"
+ },
+ "liu2023lost": {
+  "key": "liu2023lost",
+  "short_name": "Liu et al.",
+  "kind": "analysis",
+  "substrate": "native KV entries",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "position sweep",
+  "ops": [
+   "A",
+   "R"
+  ],
+  "currency": "none",
+  "grades": {
+   "capacity": "-",
+   "addressing": "M",
+   "interference": "U",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "U-shaped accuracy over evidence position; mid-context can fall below closed-book 56.1%",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Closed-book 56.1% vs gold-only oracle 88.3% (gap mixes distractors and position)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Extended-context variants have nearly superimposed position curves",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Mid-context degradation even in exact-match key-value retrieval (Claude near perfect)",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Encoder-decoder models robust within training length, U-shaped beyond",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Query-aware contextualization fixes key-value retrieval but not multi-document QA",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Instruction tuning narrows best-worst gap from ~10% to ~4%; U-shape emerges with scale",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Reader saturates before retriever recall (>20 docs adds ~1-1.5%)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "The fixed-set position sweep moves only the answer-bearing document, with the same competitors at the same count, so it isolates positional under-use as Addressing (M). The study defines no writer. Its effects of document count and the oracle gap change distractors and length together, so they stay Unassigned (Addressing, Interference).",
+  "read": "full text"
+ },
+ "liu2024kivi": {
+  "key": "liu2024kivi",
+  "short_name": "KIVI",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": false,
+  "operation": "quantize KV cache",
+  "ops": [
+   "W"
+  ],
+  "currency": "bits per entry",
+  "grades": {
+   "capacity": "-",
+   "addressing": "I",
+   "interference": "-",
+   "write": "M"
+  },
+  "findings": [
+   {
+    "name": "Per-token 2-bit K and V quantization drops CoQA from 66.37 to 52.93; 4-bit is lossless",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Per-channel value quantization collapses accuracy (about 2.8 on CoQA) whatever the key scheme",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Per-token key quantization gives about 5x the attention-score error of per-channel (47.00 vs 9.60)",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Per-token value quantization gives small attention-output error (3.55 vs 49.89), explained by attention sparsity",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Without the full-precision residual window, 2-bit GSM8K falls to 12.21 (KIVI-2 20.77, 16-bit 22.67)",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "2-bit hurts multi-query Falcon-7B on LongBench (7.95 vs 8.71); 4-bit is needed",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Group size 128 degrades GSM8K (17.29 vs 20.77 at 32)",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Long-context accuracy nearly preserved at 2 bits (Mistral-7B LongBench 45.85 vs 46.58)",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   }
+  ],
+  "basis": "Matched-bit layout ablations (per-token vs per-channel, residual window, group size) isolate the quantization error, so Write distortion is M. The addressing reading (key error that distorts attention scores) is ours and is not tested, so Addressing is I, which matches the draft's statement that the addressing reading is untested.",
+  "read": "full text"
+ },
+ "liu2025clusterkv": {
+  "key": "liu2025clusterkv",
+  "short_name": "ClusterKV",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": true,
+  "operation": "recall clusters by query",
+  "ops": [
+   "A",
+   "R"
+  ],
+  "currency": "entries",
+  "grades": {
+   "capacity": "-",
+   "addressing": "I",
+   "interference": "-",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "Higher LongBench average than Quest and InfiniGen at every budget, close to full KV (48.7 at 2048 vs 49.01)",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Token importance changes during decoding, which motivates recallable rather than permanent eviction",
+    "term": "addressing",
+    "failure_mode": "Addressing drift and staleness"
+   },
+   {
+    "name": "Page-based recall wastes budget: a 16-token page holds one or two important tokens",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Perplexity deviation up to 0.5 at budget 1024 vs about 4 (Quest) and 2 (InfiniGen)",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Recall of true top-B tokens stays below 1 (about 0.2-0.5); cosine clustering recalls best, with gains levelling off above 400 clusters",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   }
+  ],
+  "basis": "Keys are clustered at prefill without the query, and the full KV stays offloaded. The write is therefore query-agnostic, the store is reused across decoding steps, and the query-dependent choice is a read-time address decision. The gains over Quest and InfiniGen are same-budget policy comparisons without item-level evidence or a count-matched control, so under rule 5 Addressing is I (possible confound: the better policy may have won by dropping competitors).",
+  "read": "full text"
+ },
+ "maharana2024evaluating": {
+  "key": "maharana2024evaluating",
+  "short_name": "LoCoMo",
+  "kind": "benchmark",
+  "substrate": "natural-language text",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "benchmark",
+  "ops": [
+   "W",
+   "A",
+   "R"
+  ],
+  "currency": "several",
+  "grades": {
+   "capacity": "-",
+   "addressing": "-",
+   "interference": "-",
+   "write": "I"
+  },
+  "findings": [
+   {
+    "name": "All models lag humans far behind on QA (GPT-4-turbo 32.1 vs human 87.9)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Long-context models misattribute dialogs or events to the wrong speaker and hallucinate",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "RAG over observations works best overall (41.4) and on temporal questions",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Summary retrieval has high recall (90.7) but low F1 (31.5), attributed to information lost in summarization",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "16K model is below the 4K model on event summarization (FactScore F1 39.9 vs 45.9)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Inaccurate retrieval adds improper context and hurts open-domain questions",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "LoCoMo is a benchmark that evaluates several writers, so it has no write-time label and no reuse flag. Following the ledger's substrate rule, it is filed as natural-language text because the memories under discussion (observations and recursive summaries) are rewritten as text. None of its comparisons isolates a term (the summary loss is the authors' 'likely' explanation, and the top-k dilution has no count-matched control), so every non-capacity grade is I, and capacity has no bound.",
+  "read": "full text"
+ },
+ "mandal2026adaptive": {
+  "key": "mandal2026adaptive",
+  "short_name": "Mandal",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "proxy-query",
+  "multi_query_reuse": false,
+  "operation": "evict by role quota",
+  "ops": [
+   "S",
+   "A"
+  ],
+  "currency": "entries",
+  "grades": {
+   "capacity": "U",
+   "addressing": "I",
+   "interference": "U",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "H2O exact match collapses from 88% to 0% at a 5% budget on schema-dense QA",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "DELIM tokens act as a distributed attention sink (mass 13.64 vs 0.336 for VALUE, about 674 positions)",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "H2O keeps KEY tokens 1.94x as often as VALUE tokens at B=5% on JSON, consistently across four model families and in the base model",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Banning KEY tokens recovers accuracy (0.82 vs 0.14 at B=0.50); banning DELIM or VALUE is catastrophic",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Role-conditional allocator reaches 0.56 at B=0.05 vs SnapKV 0.20 and H2O 0.02",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "SnapKV's max-pool acts as implicit sink suppression; disabling it drops low-budget EM to 0.16",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Margin above full cache is seed-sensitive (+0.01, CI [-0.03, +0.07] at B=0.30)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Linear role probe is 99.5% accurate in isolation but cuts downstream EM by 18-32 points",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Gains vanish on sparse-role corpora (all alpha curves in a 0.55-0.66 band)",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   }
+  ],
+  "basis": "Retention is reported per role, not per answer item, and there is no count-matched control: the allocator also keeps fewer KEY and DELIM competitors, and the harness masks the cache rather than compacting it. Under rule 5, Addressing is therefore I, and the KEY-ban ablation (which both drops competitors and frees budget for VALUE tokens) is Unassigned (Addressing, Interference). This replaces the draft's M in the Section 8 table. SnapKV's end-of-prompt observation window makes the writer proxy-query.",
+  "read": "full text"
+ },
+ "moschella2026learning": {
+  "key": "moschella2026learning",
+  "short_name": "KVP",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": false,
+  "operation": "learned eviction ranking",
+  "ops": [
+   "S",
+   "A"
+  ],
+  "currency": "entries",
+  "grades": {
+   "capacity": "-",
+   "addressing": "I",
+   "interference": "-",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "StreamingLLM's sink-and-recency importance deviates substantially from true future-attention ranking",
+    "term": "addressing",
+    "failure_mode": "Addressing drift and staleness"
+   },
+   {
+    "name": "StreamingLLM perplexity rises sharply as the budget shrinks",
+    "term": "addressing",
+    "failure_mode": "Addressing drift and staleness"
+   },
+   {
+    "name": "Trained on ~4K tokens, KVP extrapolates to RULER-128K and beats every baseline at every budget",
+    "term": "addressing",
+    "failure_mode": "Addressing drift and staleness"
+   },
+   {
+    "name": "On OASST2, KVP has lower perplexity than other attention-free baselines except LagKV at the smallest budgets",
+    "term": "addressing",
+    "failure_mode": "Addressing drift and staleness"
+   },
+   {
+    "name": "KVP's eviction cost matches TOVA and SnapKV without using query information",
+    "term": "addressing",
+    "failure_mode": "Addressing drift and staleness"
+   },
+   {
+    "name": "Supervised ranking losses overfit attention sinks or mis-order top tokens at tight budgets; RL avoids this",
+    "term": "addressing",
+    "failure_mode": "Addressing drift and staleness"
+   },
+   {
+    "name": "Policies specialize to their training distribution (KVPS vs KVPR on zero-shot tasks)",
+    "term": "addressing",
+    "failure_mode": "Addressing drift and staleness"
+   },
+   {
+    "name": "KVP beats the learned baseline JudgeQ at every budget on three long-context benchmarks",
+    "term": "addressing",
+    "failure_mode": "Addressing drift and staleness"
+   }
+  ],
+  "basis": "Agents score tokens from keys, values and position only, so the writer is query-agnostic. All gains come from same-budget policy comparisons with no item-level eviction evidence or count-matched control, so Addressing is I under rule 5. Comparisons with TOVA and SnapKV also cross query-knowledge classes, which shifts the capacity floor.",
+  "read": "full text"
+ },
+ "mu2023learning": {
+  "key": "mu2023learning",
+  "short_name": "Gisting",
+  "kind": "method",
+  "substrate": "latent/soft vectors",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": true,
+  "operation": "compress prompt to gists",
+  "ops": [
+   "W",
+   "S"
+  ],
+  "currency": "tokens",
+  "grades": {
+   "capacity": "U",
+   "addressing": "-",
+   "interference": "-",
+   "write": "U"
+  },
+  "findings": [
+   {
+    "name": "One gist token matches the uncompressed model on seen prompts but degrades on OOD human prompts (LLaMA 84.9%, FLAN-T5 63.2% retention)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Exact agreement with the uncompressed model falls from about 50% (seen) to about 10% (OOD human)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "More gist tokens do not help and can hurt (LLaMA-7B, 10 gists), possibly through overfitting",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "At the same rate, TF-IDF keyword compression barely beats the negative control",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Authors acknowledge an inherent loss of instruction nuance (e.g. 'Arts & Culture' becomes 'Culture')",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "Gists are learned KV prefixes computed from the instruction without the later input and cached across inputs. The write is therefore query-agnostic with multi-query reuse. No bound or ablation separates encoder error from the k-token budget limit, so Capacity and Write distortion are both U, as in the draft's 'Unassigned (Write distortion vs Capacity)'.",
+  "read": "full text"
+ },
+ "nagle2024fundamental": {
+  "key": "nagle2024fundamental",
+  "short_name": "Nagle et al.",
+  "kind": "theory",
+  "substrate": "natural-language text",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "distortion-rate bound",
+  "ops": [
+   "W"
+  ],
+  "currency": "tokens",
+  "grades": {
+   "capacity": "B",
+   "addressing": "I",
+   "interference": "-",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "Query-aware compression has a much lower distortion-rate limit than query-agnostic compression",
+    "term": "capacity",
+    "failure_mode": "Capacity saturation"
+   },
+   {
+    "name": "Variable-rate query-aware limit is at least as good as fixed rate across queries",
+    "term": "capacity",
+    "failure_mode": "Capacity saturation"
+   },
+   {
+    "name": "Pruning-only and tokenization-free optima are nearly identical to the general optimum",
+    "term": "capacity",
+    "failure_mode": "Capacity saturation"
+   },
+   {
+    "name": "Most existing methods sit far from the limit; only Adaptive QuerySelect beats the query-agnostic optimum",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "On NarrativeQA the gap between methods and the query-aware bound is large, even for query-aware methods",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "The gap to the optimum depends on the query; Adaptive QuerySelect matches it on the palindrome query",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   }
+  ],
+  "basis": "The linear-program distortion-rate function is a formal bound per writer class, so Capacity is B. It is theory, so it carries no write-time label even though it also proposes Adaptive QuerySelect. Because pruning-only is near optimal, a method's gap at the same rate is a selection shortfall, graded I as in the draft. Optimal compression beating the full prompt suggests that removed content perturbs reads, which we read as Interference (I).",
+  "read": "full text"
+ },
+ "packer2023memgpt": {
+  "key": "packer2023memgpt",
+  "short_name": "MemGPT",
+  "kind": "method",
+  "substrate": "natural-language text",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": true,
+  "operation": "self-directed paging",
+  "ops": [
+   "W",
+   "A"
+  ],
+  "currency": "tokens",
+  "grades": {
+   "capacity": "-",
+   "addressing": "I",
+   "interference": "-",
+   "write": "U"
+  },
+  "findings": [
+   {
+    "name": "Paged access to full history beats lossy-summary baselines on deep memory retrieval (GPT-4 92.5% vs 32.1%)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Document truncation lowers fixed-context QA as the gold snippet is more often omitted",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Fixed-context baselines are capped at roughly the retriever's recall",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "MemGPT often stops paging before exhausting retriever results",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Weaker controllers (GPT-4 Turbo, GPT-3.5) drop off at 2 nesting levels by making too few lookups",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Baselines with all KV pairs in context collapse on nested lookups (0% by 1-3 levels), while MemGPT with GPT-4 is unaffected",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "Under the ledger's substrate rule, agent memory written as text is natural-language text, whatever the paging mechanism. Facts and summaries are saved under memory pressure, before any future query is known, and are reused across sessions. The DMR gain confounds the baseline's lossy summary (write) with budget and read mechanism, so Write is U. Early stopping and too few lookups are observed but not isolated, so Addressing is I. Nested-lookup failures with gold pairs in context are residual, so they are left unassigned.",
+  "read": "full text"
+ },
+ "qiu2026kvdiagnosis": {
+  "key": "qiu2026kvdiagnosis",
+  "short_name": "KVDiagnosis",
+  "kind": "benchmark",
+  "substrate": "native KV entries",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "benchmark",
+  "ops": [
+   "W",
+   "S",
+   "A"
+  ],
+  "currency": "several",
+  "grades": {
+   "capacity": "U",
+   "addressing": "M",
+   "interference": "-",
+   "write": "U"
+  },
+  "findings": [
+   {
+    "name": "Most C→W failures have low or partial evidence coverage (63.2%)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Drift with structural addressability (ThinK/quantization) in 2,126 failures (17.0%)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "All ten diagnostics separate failed from successful compression (AUROC 0.684–0.871)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Evidence-attention boost repairs 28/96 low-EAR failures vs 6/96 for count-matched non-evidence boost",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Similar aggregate scores hide C→W rates of 0.8–2.0% at light compression",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Methods with similar mean scores fail on different sources (Jaccard ≤0.385)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "ThinK 50% and 2-bit quantization collapse with severe likelihood drift",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Evidence coverage falls as retention decreases",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Coverage diagnoses transfer across models; quantization drift is model-specific",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "The evidence boost is tested against a count-matched non-evidence boost with C→C controls, which meets the ledger tie-break, so Addressing is M. Coverage rows have no best-store reference (Capacity vs Addressing) and drift rows have no equal-bit reference (Write distortion vs Capacity), so those cells are U.",
+  "read": "full text"
+ },
+ "rae2019compressive": {
+  "key": "rae2019compressive",
+  "short_name": "Compressive Transformer",
+  "kind": "method",
+  "substrate": "latent/soft vectors",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": true,
+  "operation": "compress evicted activations",
+  "ops": [
+   "W",
+   "S"
+  ],
+  "currency": "entries",
+  "grades": {
+   "capacity": "U",
+   "addressing": "-",
+   "interference": "-",
+   "write": "U"
+  },
+  "findings": [
+   {
+    "name": "Attention-reconstruction conv compression beats auto-encoding, BPTT and pooling (0.973 vs 0.984–0.996 bpc)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Lossy attention-reconstruction objective preferred over lossless one",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Improves over TransformerXL on PG-19 (33.6 vs 36.3)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Compression loss an order of magnitude higher for word-level than character-level modelling",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Model attends more to compressed memory than to oldest regular memory",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "At write time the learned compression function sees only the old activations, not the future query, so the writer is query-agnostic. No bound and no equal-slot lossless reference exist, so losses stay Unassigned (Write distortion vs Capacity), as in the Section 6 table.",
+  "read": "full text"
+ },
+ "rasmussen2025zep": {
+  "key": "rasmussen2025zep",
+  "short_name": "Zep",
+  "kind": "method",
+  "substrate": "natural-language text",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": true,
+  "operation": "extract temporal facts",
+  "ops": [
+   "W",
+   "A"
+  ],
+  "currency": "retrieved items (k)",
+  "grades": {
+   "capacity": "-",
+   "addressing": "U",
+   "interference": "U",
+   "write": "U"
+  },
+  "findings": [
+   {
+    "name": "Beats full context on LongMemEval with ~70x fewer tokens (71.2% vs 60.2%)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Single-session-assistant accuracy drops 17.7% after extraction",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Knowledge-update handling depends on model strength",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Incremental community updates drift from full recomputation",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Contradicted facts invalidated, not deleted (design; not evaluated)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Slightly beats MemGPT and full conversation on DMR, which authors deem too small",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "Extraction happens at ingest without the question, so the writer is query-agnostic. The LongMemEval gains and drops do not separate extraction loss, retrieval misses and full-context dilution, so the cells are U, in line with the ledger's caution about thin agent-memory evidence. Community drift is Write distortion by definition but was not measured against accuracy.",
+  "read": "full text"
+ },
+ "roy2026coverage": {
+  "key": "roy2026coverage",
+  "short_name": "K-VEC",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "proxy-query",
+  "multi_query_reuse": false,
+  "operation": "evict by coverage",
+  "ops": [
+   "S"
+  ],
+  "currency": "entries",
+  "grades": {
+   "capacity": "U",
+   "addressing": "I",
+   "interference": "-",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "Higher unique-token coverage goes with higher score than SnapKV (94.5% vs 86.6%)",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Baselines lose more coverage at 0.9 eviction than K-VEC",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Largest gains at B=128 (44.57 vs 42.96; full cache 49.20)",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Qasper and TREC drop most under eviction relative to full cache",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Coverage-module ablation: Qasper 35.96 to 25.54 (caption budget mismatch)",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Over-weighting coverage (λ=2.0) lowers score",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Information-bottleneck bound ties coverage to mutual information (per-policy, not best store)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "On par with HeadKV and above SnapKV on Needle-in-a-Haystack",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   }
+  ],
+  "basis": "Under rule 5 the same-budget ablation has no item-level evidence that the answer-bearing token was evicted, and no count-matched control. Addressing is therefore I (not the M in the Section 8 table); K-VEC may have won by dropping redundant competitors. The IB bound does not bound the best store, so Capacity is U. The prefill observation window contains the LongBench question, so the writer is query-aware. Query knowledge is labelled by design: an observation-window scorer is proxy-query even when an evaluation puts the question inside the window.",
+  "read": "full text"
+ },
+ "tang2024multihop": {
+  "key": "tang2024multihop",
+  "short_name": "MultiHop-RAG",
+  "kind": "benchmark",
+  "substrate": "external index",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "benchmark",
+  "ops": [
+   "A",
+   "R"
+  ],
+  "currency": "retrieved items (k)",
+  "grades": {
+   "capacity": "-",
+   "addressing": "M",
+   "interference": "U",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "Best retriever+reranker reaches only Hits@10 0.7467 and Hits@4 0.6625",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Reranking raises voyage-02 Hits@10 from 0.6506 to 0.7467 at the same k",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Embedding choice moves Hits@10 from 0.1479 to 0.6718",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "GPT-4 accuracy 0.56 with retrieved vs 0.89 with gold chunks",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Open LLMs score 0.32–0.36 even with gold chunks (residual)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Negation and chronological-order errors with gold evidence (residual)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Most queries need 2–4 evidence pieces",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   }
+  ],
+  "basis": "Hits@k checks, item by item and at a fixed k, whether gold evidence that is in the index and fits in k is reached, so Addressing is M. The retrieved-vs-gold accuracy gap mixes misses and distractors (Addressing vs Interference). Gold-chunk failures are residual.",
+  "read": "full text"
+ },
+ "uddin2026recall": {
+  "key": "uddin2026recall",
+  "short_name": "Memora",
+  "kind": "benchmark",
+  "substrate": "several",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "benchmark",
+  "ops": [
+   "W",
+   "R"
+  ],
+  "currency": "several",
+  "grades": {
+   "capacity": "U",
+   "addressing": "-",
+   "interference": "U",
+   "write": "U"
+  },
+  "findings": [
+   {
+    "name": "Memory agents degrade sharply on remembering from weekly to quarterly",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "LLM forgetting penalty shrinks (32.6 to 17.8) because history overflows the context",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Memory agents' stale-reuse penalty grows (18.2 to 29.5)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Forgetting-aware FAMA changes system rankings",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Recommendation errors mostly outdated memory not forgotten; reasoning errors incomplete retrieval",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Memora demands far more consolidation and mutation than prior benchmarks",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "Memora evaluates several writers and defines none of its own. FAMA and the error analysis do not separate stale reads (Interference) from missing updates (Write distortion), or overflow and partial retrieval (Capacity, Addressing), so every cell is U, matching the draft's Unassigned labels.",
+  "read": "full text"
+ },
+ "wang2025m": {
+  "key": "wang2025m",
+  "short_name": "M+",
+  "kind": "method",
+  "substrate": "latent/soft vectors",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": true,
+  "operation": "retrieve latent memory",
+  "ops": [
+   "W",
+   "S",
+   "A"
+  ],
+  "currency": "entries",
+  "grades": {
+   "capacity": "U",
+   "addressing": "-",
+   "interference": "-",
+   "write": "U"
+  },
+  "findings": [
+   {
+    "name": "Retention extends from under 20k to over 160k tokens vs MemoryLLM",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Random dropping during compression loses tokens even on short inputs",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Below full-attention Llama-3.1-8B on short LongBench (32.78 vs 35.81)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "SnapKV-style cache struggles beyond 30k tokens",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "Chunks are compressed into memory tokens without the query, so the writer is query-agnostic; the compressed pool is reused across queries. The 30% token recall is not tied to answer-bearing items, and M+ vs M+-Attn has no item-level control (rule 5), so Addressing is I. Compression loss stays Unassigned (Write distortion vs Capacity), and M+ vs MemoryLLM isolates no term.",
+  "read": "full text"
+ },
+ "wang2025unable": {
+  "key": "wang2025unable",
+  "short_name": "PI-LLM",
+  "kind": "benchmark",
+  "substrate": "native KV entries",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "benchmark",
+  "ops": [
+   "R"
+  ],
+  "currency": "none",
+  "grades": {
+   "capacity": "-",
+   "addressing": "-",
+   "interference": "I",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "Accuracy declines log-linearly with updates per key, reaching 0% for mid-size models",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "Parameter size predicts IES; context length does not",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "At fixed input length, tracking 46 keys drops llama4-maverick below 5%",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "Longer values drive accuracy below 40% and then below 5%",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "Errors shift from adjacent to earliest values, then to hallucinations",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Per-key forget prompts help by less than 10 points",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "Mock QA reset helps but accuracy still declines",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Sequential updates give step-like failure at a model-specific threshold",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "CoT and MoE give no robustness gain",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   }
+  ],
+  "basis": "Rule 3 assigns superseded values that are read to Interference, and the errors are overwritten values. The sweeps vary competitor count, not similarity at a fixed count, so the tie-break test is not met and the grade is I (the 'boundary case' of Section 9), not M. There is no budget and no writer.",
+  "read": "full text"
+ },
+ "wang2026carrot": {
+  "key": "wang2026carrot",
+  "short_name": "CARROT",
+  "kind": "method",
+  "substrate": "external index",
+  "query_knowledge": "query-aware",
+  "multi_query_reuse": false,
+  "operation": "search chunk combinations",
+  "ops": [
+   "A",
+   "R"
+  ],
+  "currency": "tokens",
+  "grades": {
+   "capacity": "-",
+   "addressing": "I",
+   "interference": "U",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "MCTS selection beats Top-k (0.327), Bandit (0.362) and Beam Search (0.380) with 0.432 ROUGE-1 under a 1024-token budget (Table VI)",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Search-chosen ordering gains 11-15% relative over highest-score-first; reversing the chosen order drops ROUGE-1 from 0.43 to 0.21",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "NaiveRAG stays flat at 0.327/0.333/0.328 ROUGE-1 at 1024/2048/8192 tokens",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "Rule 5 (tightened): no item-by-item evidence that baselines dropped the answer-bearing chunk and no count-matched control, and CARROT explicitly removes redundant chunks, so its gains may be reduced Interference; Addressing is I, not M as Sec. 7 says. The flat NaiveRAG curve confounds positional under-use and dilution, so it is Unassigned (Addressing, Interference).",
+  "read": "full text"
+ },
+ "wei2026witcert": {
+  "key": "wei2026witcert",
+  "short_name": "WitCert",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": false,
+  "operation": "certify KV quantization",
+  "ops": [
+   "W",
+   "R"
+  ],
+  "currency": "bits per entry",
+  "grades": {
+   "capacity": "U",
+   "addressing": "-",
+   "interference": "-",
+   "write": "B"
+  },
+  "findings": [
+   {
+    "name": "Sound per-(layer, head, step) upper bound on total variation between exact and quantized attention",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Cross-layer error cancellation: KIVI-2bit distorts 21.9% of steps yet retrieves 95.8%; no single layer's pollution alone loses anything",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Meter gating with exact page-in restores broken schemes (fp8 22.8 to 79.7 on hard RULER)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "The TV bound is a formal bound on attention displacement caused by quantization error, and the ledger allows B for any term, so Write is B. Gating pages in FP16 blocks and so changes bits per entry. It is Unassigned (Capacity, Write distortion), consistent with the Sec. 8 list of omitted comparisons.",
+  "read": "full text"
+ },
+ "wu2022memorizing": {
+  "key": "wu2022memorizing",
+  "short_name": "Memorizing Transformers",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": false,
+  "operation": "kNN retrieve past KV",
+  "ops": [
+   "S",
+   "A",
+   "R"
+  ],
+  "currency": "entries",
+  "grades": {
+   "capacity": "-",
+   "addressing": "I",
+   "interference": "U",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "Training from scratch with large memory is unstable, possibly due to key staleness (authors' speculation)",
+    "term": "addressing",
+    "failure_mode": "Addressing drift and staleness"
+   },
+   {
+    "name": "About 90% approximate kNN recall; no significant degradation with lower-quality kNN (qualitative)",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "With larger memory some tokens get worse, possibly because a relevant memory leaves the top-k",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "The staleness claim is speculative and the kNN-quality result is qualitative with no item-level test, so Addressing is I, not M. The larger-memory result confounds a retrieval miss with being outcompeted by added entries, so it is Unassigned (Addressing, Interference), and the Interference cell is U.",
+  "read": "full text"
+ },
+ "xiong2026context": {
+  "key": "xiong2026context",
+  "short_name": "Xiong et al.",
+  "kind": "analysis",
+  "substrate": "native KV entries",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "N-back diagnosis",
+  "ops": [
+   "R"
+  ],
+  "currency": "none",
+  "grades": {
+   "capacity": "-",
+   "addressing": "U",
+   "interference": "I",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "Lure sensitivity predicts lower N-back accuracy across models (r = -.51 AR, -.32 TF)",
+    "term": "interference",
+    "failure_mode": "Read-time crosstalk and dilution"
+   },
+   {
+    "name": "Residual decodability and positional subspace overlap predict poorer recall; target readout alignment predicts recall",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "Projecting out letter-identity directions improves accuracy, mostly in weaker models (settings chosen and evaluated on the same 50 trials)",
+    "term": "interference",
+    "failure_mode": "Read-time crosstalk and dilution"
+   },
+   {
+    "name": "Load-dependent accuracy collapse persists under teacher forcing; target-selective heads spread attention to recent non-targets",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "The context is uncompressed with no budget, so Capacity does not arise; that follows by construction and is not a formal bound. The 2-layer solver bounds reader expressivity, not a store (Sec. 3 is right; Sec. 5's 'zero (B)' must go). Interference is I because the evidence is correlational and the projection was tuned and tested on the same 50 trials with no held-out set. Load and attention-spread effects confound Addressing and Interference.",
+  "read": "full text"
+ },
+ "xu2023retrieval": {
+  "key": "xu2023retrieval",
+  "short_name": "Xu et al.",
+  "kind": "analysis",
+  "substrate": "external index",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "retrieval vs. long context",
+  "ops": [
+   "A",
+   "R"
+  ],
+  "currency": "several",
+  "grades": {
+   "capacity": "-",
+   "addressing": "U",
+   "interference": "U",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "4K+retrieval matches 16K long context; truncated 4K baselines are worst",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Llama2-70B shows lost-in-the-middle; the long-context model uses top-5 retrieved context better",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Adding retrieved chunks up to 20 does not help and sometimes hurts, even when they fit",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "This is an empirical comparison of several retrievers and context windows with no writer of its own, so query knowledge is '--'. It varies both tokens and k. Retrieval beating truncation at 4K is a policy comparison with no item-level evidence (rule 5: I). The more-chunks result confounds positional under-use with dilution, so it is Unassigned (Addressing, Interference).",
+  "read": "full text"
+ },
+ "yang2026jacap": {
+  "key": "yang2026jacap",
+  "short_name": "JACAP",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "proxy-query",
+  "multi_query_reuse": false,
+  "operation": "evict by Jacobian capacity",
+  "ops": [
+   "S",
+   "A"
+  ],
+  "currency": "entries",
+  "grades": {
+   "capacity": "U",
+   "addressing": "I",
+   "interference": "-",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "At CR 0.9 JACAP beats CapKV (44.59 vs 39.53 on Qwen3-14B), with smaller leads on Qwen3-8B and Llama3.1-8B; CapKV wins at low compression",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Heuristic eviction (KNorm, KeyDiff) collapses to about 20 versus a full-cache 47.48 at CR 0.9",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "It scores tokens with the mean of past queries, which makes it proxy-query. Under rule 5 its same-budget wins lack item-level evidence and a count-matched control, so they are Addressing I with the confound that its diversity term may win by dropping redundant competitors. Comparisons with the full cache, and its 'information capacity' surrogate, do not bound the best store, so they are Unassigned (Capacity, Addressing).",
+  "read": "full text"
+ },
+ "yang2026rethinking": {
+  "key": "yang2026rethinking",
+  "short_name": "CapKV",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "proxy-query",
+  "multi_query_reuse": false,
+  "operation": "evict by log-det capacity",
+  "ops": [
+   "S",
+   "A"
+  ],
+  "currency": "entries",
+  "grades": {
+   "capacity": "U",
+   "addressing": "I",
+   "interference": "-",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "CapKV has the best LongBench average at every compression ratio on Qwen3-8B/14B (e.g. 39.53 vs SnapKV 37.13 at CR 0.9, Qwen3-14B)",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Retained log-det capacity correlates with Qasper score (Spearman 0.75-0.86) across methods and ratios",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Structure-only heuristics collapse at CR 0.9 (KeyDiff 20.95, Knorm 20.09 vs full 47.48)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "The weights w_i use the mean of past queries, so CapKV is proxy-query. The draft cites it only to define query-agnostic, which is not a label for CapKV itself. Its policy wins are Addressing I under rule 5 (no item-level evidence; it may win by dropping redundant competitors). The capacity correlation mixes budgets and methods with a surrogate that does not bound the best store, so it is Unassigned (Capacity, Addressing).",
+  "read": "full text"
+ },
+ "yuan2025weightedkv": {
+  "key": "yuan2025weightedkv",
+  "short_name": "WeightedKV",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "proxy-query",
+  "multi_query_reuse": false,
+  "operation": "evict keys, merge values",
+  "ops": [
+   "W",
+   "S"
+  ],
+  "currency": "entries",
+  "grades": {
+   "capacity": "-",
+   "addressing": "U",
+   "interference": "-",
+   "write": "I"
+  },
+  "findings": [
+   {
+    "name": "Merging evicted values into neighbours by attention-weighted convex combination alters retained values",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Outperforms all baselines, especially at low budget ratios",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "Read only in abstract, so no cell can be above I. It scores tokens with averaged observed attention, which makes it proxy-query. Under rule 4, folded values leave the neighbouring entries present but altered, so this is Write distortion (I), not Interference as its placement in Sec. 5 implies. Its wins change both what is kept and what is written, so they are Unassigned (Addressing, Write distortion).",
+  "read": "abstract"
+ },
+ "zahn2026attention": {
+  "key": "zahn2026attention",
+  "short_name": "Knowledge Objects",
+  "kind": "method",
+  "substrate": "natural-language text",
+  "query_knowledge": "query-agnostic",
+  "multi_query_reuse": true,
+  "operation": "extract hash-addressed facts",
+  "ops": [
+   "W",
+   "S",
+   "A",
+   "R"
+  ],
+  "currency": "entries",
+  "grades": {
+   "capacity": "-",
+   "addressing": "I",
+   "interference": "I",
+   "write": "I"
+  },
+  "findings": [
+   {
+    "name": "Neural LAM collapses at N=75 (1.3%) while KO stays at 100%",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Higher semantic density rho moves collapse to smaller N",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "Multi-hop in neural memory: 100% isolated (N=6), 0% under load (N=106)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Neural updates fail (0% new value) and corrupt other facts (1.1% preserved)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Hopfield collapses with scale (0.5% at N=16,309) vs gradual KO decline",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Structured facts beat raw text about 11x at Top-1",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Dense scientific data: KO hash 100%, KO embedding 28%, neural 0.02%",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Collapse extends to image embeddings (0.05% at N=2,000)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Schema drift in LLM extraction, even within one session",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Corrections leave old and new values coexisting (version ambiguity)",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "In-context retrieval at N<=100 perfect, no positional bias",
+    "term": "interference",
+    "failure_mode": "Read-time crosstalk and dilution"
+   }
+  ],
+  "basis": "The ledger puts extracted facts and triples under natural-language text however they are later retrieved, so the introduction's external-index placement is overridden. Interference is I because the density sweep does not hold the item and competitor count fixed. Write is M because Table 9 measures extraction drift directly. The KO-vs-neural and N-scaling contrasts confound Capacity, Interference and Write, so they are Unassigned. Stale versions that are retained and read go to Interference under rule 3.",
+  "read": "full text"
+ },
+ "zeng2024structural": {
+  "key": "zeng2024structural",
+  "short_name": "Zeng et al.",
+  "kind": "analysis",
+  "substrate": "natural-language text",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "compare memory structures",
+  "ops": [
+   "W",
+   "A",
+   "R"
+  ],
+  "currency": "retrieved items (k)",
+  "grades": {
+   "capacity": "U",
+   "addressing": "U",
+   "interference": "U",
+   "write": "I"
+  },
+  "findings": [
+   {
+    "name": "Mixed memory with iterative retrieval best on multi-hop QA",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Full context beats all retrieval memories on QuALITY (81.5 vs 79.5)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Triples lose narrative context (QuALITY ~60 vs chunks ~77)",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Summaries beat full content on NarrativeQA",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "No single structure best; mixed lowest on LoCoMo EM",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Too many retrieved memories (K=200, R>50) lower scores",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "All structures degrade as noise documents are added",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Memory-Doc helps broad-context tasks, not precision tasks",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "The study is an analysis that evaluates several writers, so query knowledge is not applicable and there is no reuse flag. Raising K or adding noise documents raises access to the item and adds competitors at the same time, so those results are Unassigned (Addressing, Interference). Triple loss is graded I as write distortion, since format also changes the retrieval units. This follows the ledger's thin-evidence rule for text memory.",
+  "read": "full text"
+ },
+ "zhang2025more": {
+  "key": "zhang2025more",
+  "short_name": "Quantized pruning",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "proxy-query",
+  "multi_query_reuse": false,
+  "operation": "prune then quantize",
+  "ops": [
+   "W",
+   "S",
+   "A"
+  ],
+  "currency": "several",
+  "grades": {
+   "capacity": "-",
+   "addressing": "U",
+   "interference": "-",
+   "write": "U"
+  },
+  "findings": [
+   {
+    "name": "8-bit near lossless, 4-bit mild, 2-bit collapses at fixed tokens",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "At equal memory, cutting tokens hurts more than cutting precision",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Quantized pruning gains on RULER at 1/16 budget (67.5 to 82.2)",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Throughput-matched: 512 tokens at 4-bit beats 128 at 16-bit",
+    "term": "addressing",
+    "failure_mode": "Addressing miss at retrieval"
+   },
+   {
+    "name": "Reasoning-heavy tasks gain less or prefer fewer, more precise tokens",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "8-bit/2x wins at high budget, 4-bit/4x at low budget",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Smaller quantization groups lower loss",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Per-channel KIVI beats token-wise FlexGen",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   }
+  ],
+  "basis": "The bit sweep at a fixed token count isolates write distortion (M). The token-for-precision gain is a same-budget policy comparison with no item-level evidence, so under rule 5 Addressing is I. The confound is that keeping more tokens also changes the competitor set. The pruners score tokens at prefill with the question in the prompt, so the writer is query-aware. Query knowledge is labelled by design: an observation-window scorer is proxy-query even when an evaluation puts the question inside the window.",
+  "read": "full text"
+ },
+ "zhang2026mixkvq": {
+  "key": "zhang2026mixkvq",
+  "short_name": "MixKVQ",
+  "kind": "method",
+  "substrate": "native KV entries",
+  "query_knowledge": "proxy-query",
+  "multi_query_reuse": false,
+  "operation": "mixed-precision key quantization",
+  "ops": [
+   "W",
+   "S"
+  ],
+  "currency": "bits per entry",
+  "grades": {
+   "capacity": "U",
+   "addressing": "-",
+   "interference": "-",
+   "write": "M"
+  },
+  "findings": [
+   {
+    "name": "MixKVQ near BF16 on Qwen-32B reasoning; 2-bit KIVI drops",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "KVQuant collapses at 2-bit on reasoning (0 on AIME)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Key precision matters more than value precision (K4V2 6.81 vs K2V4 8.13)",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Query magnitude weakly correlated with key scale (r=0.16)",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Near-lossless LongBench at about 2.7 bits",
+    "term": "write",
+    "failure_mode": "Write distortion"
+   },
+   {
+    "name": "Low-bit error accumulation flips long-CoT answers",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "The matched-bit key/value contrast isolates write distortion (M). The 2-bit reasoning collapse and error accumulation do not separate Capacity from Write distortion, so they are Unassigned, as in the draft table. Salience uses observed query-activation statistics as a stand-in for future reads, so despite the title the writer is proxy-query.",
+  "read": "full text"
+ },
+ "thiswork": {
+  "key": "thiswork",
+  "short_name": "This work (Sec.~\\ref{sec:case})",
+  "kind": "analysis",
+  "substrate": "native KV entries",
+  "query_knowledge": "not applicable",
+  "multi_query_reuse": false,
+  "operation": "protect item; vary competitors",
+  "grades": {
+   "capacity": "U",
+   "addressing": "M",
+   "interference": "M",
+   "write": "-"
+  },
+  "findings": [
+   {
+    "name": "Query-aware eviction: keeping the answer-bearing item at the same budget repairs 99.9% (Task 1) and 63% (Task 2) of C-to-W rows; a count-matched sham repairs 0.4% and 6.5%",
+    "term": "addressing",
+    "failure_mode": "Selection shortfall"
+   },
+   {
+    "name": "Protected query-aware stores within the budget bound the capacity floor: at most 1% loss on Task 1; about zero on Task 2 at a 25% budget",
+    "term": "capacity",
+    "failure_mode": "Capacity saturation"
+   },
+   {
+    "name": "Proxy-query and query-agnostic eviction: the same repair is Unassigned (Capacity, Addressing)",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   },
+   {
+    "name": "Full cache: near-duplicate keys lower accuracy from 98.3% to 81.1% as records grow from 200 to 1,400; 44 of 48 errors return another near-duplicate's value; same-category keys cause no errors",
+    "term": "interference",
+    "failure_mode": "Key collision and redundancy"
+   },
+   {
+    "name": "HotpotQA: question-similar distractors raise the odds of error with the item present, OR 1.44 (full cache) and 1.31 (compressed, item protected)",
+    "term": "interference",
+    "failure_mode": "Read-time crosstalk and dilution"
+   },
+   {
+    "name": "Token-retention thresholds do not mark readability: 31-45% of TOVA answers on Task 1 are correct below threshold",
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
+   }
+  ],
+  "basis": "Protection forces the answer-bearing item into the cache at the same budget and policy, and a count-matched sham that protects an equal-length non-answer span repairs almost nothing, so the repair comes from keeping the item. For query-aware runs the question determines the item, so the protected store is one the writer's class could build: the repair is a selection shortfall under rule 1 (Addressing M), and the protected store's loss bounds the capacity floor (B). For proxy-query and query-agnostic runs the repair is Unassigned (Capacity, Addressing). Competitor similarity is varied at a fixed count with the item present, which isolates Interference (M). Eviction does not alter stored entries, so Write distortion is not tested.",
+  "ops": [
+   "S",
+   "R"
+  ],
+  "currency": "entries",
+  "read": ""
+ }
+}

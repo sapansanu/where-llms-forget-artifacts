@@ -1,0 +1,115 @@
+{
+ "rows": 14040,
+ "rows_excluded_no_verbatim_answer": 0,
+ "models": [
+  "Qwen/Qwen2.5-7B-Instruct"
+ ],
+ "threshold": 0.5,
+ "hypothesis_test": {
+  "n_kept": 7560,
+  "full_cache": {
+   "note": "model did not converge (separation); not estimable",
+   "n": 1080
+  },
+  "all_conditions": {
+   "note": "model did not converge (separation); not estimable",
+   "n": 7560
+  },
+  "design": "item present by construction: full cache or protected at the same budget",
+  "load_trend": {
+   "high_tier_or_per_doubling": 2.8465797517173668,
+   "or_ci": [
+    1.85031647999525,
+    4.379259640441676
+   ],
+   "p_value": 1.9375052123232764e-06,
+   "n": 540,
+   "per_load": {
+    "200": {
+     "high_errors": 3,
+     "high_n": 180,
+     "other_errors": 0,
+     "other_n": 360,
+     "fisher_p": 0.036625261797858716
+    },
+    "700": {
+     "high_errors": 11,
+     "high_n": 180,
+     "other_errors": 0,
+     "other_n": 360,
+     "fisher_p": 4.5796280234523205e-06
+    },
+    "1400": {
+     "high_errors": 34,
+     "high_n": 180,
+     "other_errors": 0,
+     "other_n": 360,
+     "fisher_p": 6.1995629563053104e-18
+    }
+   }
+  }
+ },
+ "sensitivity": {
+  "threshold mean>=0.5": {
+   "n_kept": 1705,
+   "full_cache": {
+    "note": "model did not converge (separation); not estimable",
+    "n": 1080
+   },
+   "all_conditions": {
+    "note": "model did not converge (separation); not estimable",
+    "n": 1705
+   }
+  },
+  "mean>=0.25": {
+   "n_kept": 2241,
+   "full_cache": {
+    "note": "model did not converge (separation); not estimable",
+    "n": 1080
+   },
+   "all_conditions": {
+    "n": 2241,
+    "clusters": 540,
+    "odds_ratio_per_tier": 1.0342653608849792,
+    "or_ci": [
+     0.7865223335924758,
+     1.3600438169894196
+    ],
+    "p_value": 0.8094364287132458
+   }
+  },
+  "mean>=0.75": {
+   "n_kept": 1444,
+   "full_cache": {
+    "note": "model did not converge (separation); not estimable",
+    "n": 1080
+   },
+   "all_conditions": {
+    "note": "model did not converge (separation); not estimable",
+    "n": 1444
+   }
+  },
+  "full_heads_min>=0.5": {
+   "n_kept": 1442,
+   "full_cache": {
+    "note": "model did not converge (separation); not estimable",
+    "n": 1080
+   },
+   "all_conditions": {
+    "note": "model did not converge (separation); not estimable",
+    "n": 1442
+   }
+  },
+  "any_head_layers_min>=0.5": {
+   "n_kept": 1713,
+   "full_cache": {
+    "note": "model did not converge (separation); not estimable",
+    "n": 1080
+   },
+   "all_conditions": {
+    "note": "model did not converge (separation); not estimable",
+    "n": 1713
+   }
+  }
+ }
+}
