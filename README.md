@@ -33,6 +33,7 @@ Supplementary Appendix B of the paper gives the full setup.
 | `memloss/keysim.py` | Key similarity inside the reader: input embeddings and pre-RoPE attention keys per layer. |
 | `memloss/ann.py` | The retrieval experiment: exact, HNSW and quantized indexes over HotpotQA paragraphs, the reader, and the protect/sham repairs. |
 | `memloss/ann_analyze.py` | Summarizes the retrieval experiment and writes the paper's Table 4. |
+| `memloss/paper_stats.py` | Computes the remaining statistics quoted in the text (pooled repairs, neighbour and closeness analyses, retention thresholds, gap recovery, protected-store bounds, Task 2 descriptives, key similarities). |
 | `modal_app.py` | Runs shards on Modal A100-80GB GPUs. |
 | `tests/` | Tests for generator reproducibility across processes, protection at the same budget, sham placement and answer spans. |
 | `results/v2/` | Task 1 logs: main runs (`v2-A-*`), protected (`v2-protect-A-*`), sham (`v2-sham-A-*`) and the full-cache load sweep at 700 and 1,400 records (`v2-sweep-N*`). |
@@ -61,9 +62,10 @@ uv run python -m memloss.paper_table --out case_study_table.tex
 uv run python -m memloss.figure --out results/final/case_study
 uv run python -m memloss.second_reader --results results/mistral --out results/final/mistral_A_summary.json
 uv run python -m memloss.ann_analyze results/ann/ann-n500.jsonl results/ann/ann-eq48-n500.jsonl --out results/final/ann --tex ann_table.tex
+uv run python -m memloss.paper_stats --out results/final/paper_stats.json
 ```
 
-These commands regenerate `results/final/` and the paper's Tables 4 and 8 exactly from the logs. (On macOS, set
+These commands regenerate `results/final/`, the paper's Tables 4 and 8 and the statistics in its text exactly from the logs. `paper_stats` also rebuilds the Task 2 examples, so it downloads HotpotQA and the Qwen tokenizer. (On macOS, set
 `KMP_DUPLICATE_LIB_OK=TRUE` for `ann_analyze`, because torch and faiss each ship an OpenMP runtime.)
 
 ### Rerunning the experiments

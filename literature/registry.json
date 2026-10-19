@@ -249,7 +249,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "H2O scores entries with attention from past queries, so it is proxy-query. Its comparison with recency-only eviction falls under rule 5 with no item-by-item or count-matched control, so Addressing is I (confound: it may win by dropping competitors). Write is '-' (the reviewer is right: retained entries are unaltered). The greedy guarantee is for a submodular surrogate, not a capacity bound.",
+  "basis": "H2O scores entries with attention from past queries, so it is proxy-query. Its comparison with recency-only eviction falls under rule 5 with no item-by-item or count-matched control, so Addressing is I (confound: it may win by dropping competitors). Write is '-' (the reviewer is right: retained entries are unaltered). The greedy guarantee is for a submodular surrogate, not a capacity bound. Revision: its gains over recency-only eviction compare a proxy-query writer with a query-agnostic one, so the comparison crosses query-knowledge classes and Addressing is U (Capacity, Addressing), not I.",
   "read": "full text"
  },
  "behnam2025empiric": {
@@ -476,7 +476,7 @@
  },
  "colaco2026keep": {
   "key": "colaco2026keep",
-  "short_name": "Colaco et al.",
+  "short_name": "Colaco and Lahjouji",
   "kind": "theory",
   "substrate": "several",
   "query_knowledge": "not applicable",
@@ -3301,7 +3301,7 @@
     "failure_mode": "Write distortion"
    }
   ],
-  "basis": "The bit sweep at a fixed token count isolates write distortion (M). The token-for-precision gain is a same-budget policy comparison with no item-level evidence, so under rule 5 Addressing is I. The confound is that keeping more tokens also changes the competitor set. The pruners score tokens at prefill with the question in the prompt, so the writer is query-aware. Query knowledge is labelled by design: an observation-window scorer is proxy-query even when an evaluation puts the question inside the window. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
+  "basis": "The bit sweep at a fixed token count isolates write distortion (M). The token-for-precision gain is a same-budget policy comparison with no item-level evidence, so under rule 5 Addressing is I. The confound is that keeping more tokens also changes the competitor set. The pruners score tokens at prefill with the question in the prompt, so the writer is query-aware. Query knowledge is labelled by design: an observation-window scorer is proxy-query even when an evaluation puts the question inside the window. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'. Revision: the bit sweep at a fixed token count also lowers the bit budget, so Write distortion is U (Capacity, Write distortion), not M; the token-for-precision trade changes which tokens are kept and how precisely, so Addressing is U (Addressing, Write distortion). Query knowledge is labelled by design: the observation-window scorers are proxy-query.",
   "read": "full text"
  },
  "zhang2026mixkvq": {
