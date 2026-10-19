@@ -1,0 +1,38 @@
+[
+ {
+  "study": "DBTrimKV",
+  "term": "addressing",
+  "from": "-",
+  "to": "I"
+ },
+ {
+  "study": "LLMLingua",
+  "term": "addressing",
+  "from": "U",
+  "to": "I"
+ },
+ {
+  "study": "EpiKV",
+  "term": "addressing",
+  "from": "U",
+  "to": "I"
+ },
+ {
+  "study": "Łajewska et al.",
+  "term": "write",
+  "from": "I",
+  "to": "M"
+ },
+ {
+  "study": "MultiHop-RAG",
+  "term": "addressing",
+  "from": "M",
+  "to": "I"
+ },
+ {
+  "study": "RULER",
+  "term": "interference",
+  "from": "M",
+  "to": "I"
+ }
+]

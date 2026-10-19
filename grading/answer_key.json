@@ -1,0 +1,179 @@
+{
+ "studies": {
+  "huang2025mitigate": {
+   "capacity": "U",
+   "addressing": "-",
+   "interference": "-",
+   "write": "U"
+  },
+  "bui2026make": {
+   "capacity": "U",
+   "addressing": "-",
+   "interference": "I",
+   "write": "-"
+  },
+  "ge2023context": {
+   "capacity": "U",
+   "addressing": "-",
+   "interference": "-",
+   "write": "M"
+  },
+  "hsieh2024ruler": {
+   "capacity": "-",
+   "addressing": "U",
+   "interference": "M",
+   "write": "-"
+  },
+  "jiang2023llmlingua": {
+   "capacity": "U",
+   "addressing": "U",
+   "interference": "-",
+   "write": "-"
+  },
+  "ajewska2025understanding": {
+   "capacity": "U",
+   "addressing": "-",
+   "interference": "-",
+   "write": "I"
+  },
+  "hoy2026continuous": {
+   "capacity": "U",
+   "addressing": "-",
+   "interference": "-",
+   "write": "I"
+  },
+  "qiu2026kvdiagnosis": {
+   "capacity": "U",
+   "addressing": "M",
+   "interference": "-",
+   "write": "U"
+  },
+  "wang2025unable": {
+   "capacity": "-",
+   "addressing": "-",
+   "interference": "I",
+   "write": "-"
+  },
+  "chen2023benchmarking": {
+   "capacity": "-",
+   "addressing": "U",
+   "interference": "U",
+   "write": "I"
+  },
+  "jiang2026anatomy": {
+   "capacity": "-",
+   "addressing": "U",
+   "interference": "-",
+   "write": "I"
+  },
+  "tang2024multihop": {
+   "capacity": "-",
+   "addressing": "M",
+   "interference": "U",
+   "write": "-"
+  },
+  "barrett2023h2o": {
+   "capacity": "U",
+   "addressing": "U",
+   "interference": "-",
+   "write": "-"
+  },
+  "kolawole2026epiphany": {
+   "capacity": "U",
+   "addressing": "U",
+   "interference": "-",
+   "write": "-"
+  },
+  "wei2026witcert": {
+   "capacity": "U",
+   "addressing": "-",
+   "interference": "-",
+   "write": "B"
+  }
+ },
+ "screening": {
+  "S1": true,
+  "S2": false,
+  "S3": false,
+  "S4": false,
+  "S5": false,
+  "S6": false,
+  "S7": true,
+  "S8": true,
+  "S9": false,
+  "S10": false,
+  "S11": true,
+  "S12": true,
+  "S13": false,
+  "S14": true,
+  "S15": false,
+  "S16": false,
+  "S17": true,
+  "S18": false,
+  "S19": true,
+  "S20": false,
+  "S21": false,
+  "S22": false,
+  "S23": true,
+  "S24": false,
+  "S25": true,
+  "S26": true,
+  "S27": false,
+  "S28": false,
+  "S29": true,
+  "S30": true,
+  "S31": true,
+  "S32": true,
+  "S33": true,
+  "S34": true,
+  "S35": true,
+  "S36": true,
+  "S37": true,
+  "S38": false,
+  "S39": false,
+  "S40": false
+ },
+ "screening_titles": {
+  "S1": "OSDN: Improving Delta Rule with Provable Online Preconditioning in Linear Attention",
+  "S2": "Retrieval Augmented Generation for the Detection of Major Bleeding Events in the Electronic Health Record",
+  "S3": "Automated Summarization of Financial News Using Large Language Models and Retrieval-Augmented Generation: An Early Empirical Study (Fall 2023)",
+  "S4": "ActionCLIP: A New Paradigm for Video Action Recognition",
+  "S5": "\u2018Redeeming the body\u2019: Embodiment and the \u2018other\u2019 in the work of Marion Milner",
+  "S6": "Temporal Window Smoothing of Exogenous Variables for Improved Time Series Prediction",
+  "S7": "Nonparametric Masked Language Modeling",
+  "S8": "QoKV: Comprehending and Surpassing the Hurdles of KV Cache Quantization",
+  "S9": "Design and Evaluation of a Retrieval-Augmented Generation Architecture for OWASP Security Data",
+  "S10": "Generative AI as External Operational Mediation: Open Research Materials, Supplementary Methodological Guide, Figures, and Coded Corpus Dataset (v15)",
+  "S11": "Q-KVComm: Efficient Multi-Agent Communication via Adaptive KV Cache Compression",
+  "S12": "Merging Generated and Retrieved Knowledge for Open-Domain QA",
+  "S13": "Numerical Weather Forecasting Using Convolutional-LSTM With Attention and Context Matcher Mechanisms",
+  "S14": "Escaping the Context Bottleneck: Active Context Curation for LLM Agents via Reinforcement Learning",
+  "S15": "Multi-Task Learning With Multi-Query Transformer for Dense Prediction",
+  "S16": "Bridging the Gap Between Anchor-Based and Anchor-Free Detection via Adaptive Training Sample Selection",
+  "S17": "Benchmarking Large Language Models in Retrieval-Augmented Generation",
+  "S18": "Exploiting a Joint Embedding Space for Generalized Zero-Shot Semantic Segmentation",
+  "S19": "WeightedKV: Attention Scores Weighted Key-Value Cache Merging for Large Language Models",
+  "S20": "AudioKV: KV Cache Eviction in Efficient Large Audio Language Models",
+  "S21": "Quant VideoGen: Auto-Regressive Long Video Generation via 2-Bit KV-Cache Quantization",
+  "S22": "Retrieval-Based Prompt Selection for Code-Related Few-Shot Learning",
+  "S23": "MemInsight: Autonomous Memory Augmentation for LLM Agents",
+  "S24": "Towards Automated Smart Contract Generation: Evaluation, Benchmarking, and Retrieval-Augmented Repair",
+  "S25": "Advancing Retrieval-Augmented Generation with Inverted Question Matching for Enhanced QA Performance",
+  "S26": "KeyDiff: Key Similarity-Based KV Cache Eviction for Long-Context LLM Inference in Resource-Constrained Environments",
+  "S27": "FCOS: Fully Convolutional One-Stage Object Detection",
+  "S28": "Integrated Multimodal AI System for Retrieval-Augmented Reasoning, Object Sensing, and Damage Analysis",
+  "S29": "XQuant: Achieving Ultra-Low Bit KV Cache Quantization with Cross-Layer Compression",
+  "S30": "Agent Drift: Quantifying Behavioral Degradation in Multi-Agent LLM Systems Over Extended Interactions",
+  "S31": "Cross-layer Attention Sharing for Pre-trained Large Language Models",
+  "S32": "Never Lost in the Middle: Mastering Long-Context Question Answering with Position-Agnostic Decompositional Training",
+  "S33": "TRUSTMEM: Learning Trustworthy Memory Consolidation for LLM Agents with Long-Term Memory",
+  "S34": "The Retriever Should Remember: Experience-Amortized Reranking for Long-Term Agent Memory",
+  "S35": "ContextPilot: Teaching Agents for Proactive Context Management via Fine-grained RL",
+  "S36": "FINCH: Prompt-guided Key-Value Cache Compression for Large Language Models",
+  "S37": "EVICPRESS: Joint KV-Cache Compression and Eviction for Efficient LLM Serving",
+  "S38": "Swin Transformer: Hierarchical Vision Transformer using Shifted Windows",
+  "S39": "Pruning Large Language Models to Intra-module Low-rank Architecture with Transitional Activations",
+  "S40": "Zero-Shot Instance Segmentation"
+ },
+ "seed": 20261018
+}

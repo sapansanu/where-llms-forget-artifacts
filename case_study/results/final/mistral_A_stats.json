@@ -1,0 +1,89 @@
+{
+ "rows": 4680,
+ "rows_excluded_no_verbatim_answer": 0,
+ "models": [
+  "mistralai/Mistral-7B-Instruct-v0.3"
+ ],
+ "threshold": 0.5,
+ "hypothesis_test": {
+  "n_kept": 2520,
+  "full_cache": {
+   "note": "model did not converge (separation); not estimable",
+   "n": 360
+  },
+  "all_conditions": {
+   "n": 2520,
+   "clusters": 180,
+   "odds_ratio_per_tier": 1.4880247985564556,
+   "or_ci": [
+    0.8871836267698509,
+    2.495782985965072
+   ],
+   "p_value": 0.13199043009868092
+  },
+  "design": "item present by construction: full cache or protected at the same budget"
+ },
+ "sensitivity": {
+  "threshold mean>=0.5": {
+   "n_kept": 587,
+   "full_cache": {
+    "note": "model did not converge (separation); not estimable",
+    "n": 360
+   },
+   "all_conditions": {
+    "note": "model did not converge (separation); not estimable",
+    "n": 587
+   }
+  },
+  "mean>=0.25": {
+   "n_kept": 878,
+   "full_cache": {
+    "note": "model did not converge (separation); not estimable",
+    "n": 360
+   },
+   "all_conditions": {
+    "n": 878,
+    "clusters": 180,
+    "odds_ratio_per_tier": 1.1214381585969648,
+    "or_ci": [
+     0.7954649707044493,
+     1.5809917342351638
+    ],
+    "p_value": 0.5130644625932075
+   }
+  },
+  "mean>=0.75": {
+   "n_kept": 480,
+   "full_cache": {
+    "note": "model did not converge (separation); not estimable",
+    "n": 360
+   },
+   "all_conditions": {
+    "note": "model did not converge (separation); not estimable",
+    "n": 480
+   }
+  },
+  "full_heads_min>=0.5": {
+   "n_kept": 481,
+   "full_cache": {
+    "note": "model did not converge (separation); not estimable",
+    "n": 360
+   },
+   "all_conditions": {
+    "note": "model did not converge (separation); not estimable",
+    "n": 481
+   }
+  },
+  "any_head_layers_min>=0.5": {
+   "n_kept": 615,
+   "full_cache": {
+    "note": "model did not converge (separation); not estimable",
+    "n": 360
+   },
+   "all_conditions": {
+    "note": "model did not converge (separation); not estimable",
+    "n": 615
+   }
+  }
+ }
+}

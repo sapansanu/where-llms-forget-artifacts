@@ -13,7 +13,7 @@
   ],
   "currency": "entries",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "I",
    "interference": "-",
    "write": "I"
@@ -45,7 +45,7 @@
     "failure_mode": "Addressing miss at retrieval"
    }
   ],
-  "basis": "Spans, summaries and SVD factors are written from surprisal before any query, so the writer is query-agnostic; the query-dependent zoom gate is a read-side addressing step. No ablation separates routing misses from low-rank write error, so Addressing and Write are I, and the gap to full KV (and the comparison with eviction) is Unassigned (Addressing, Write distortion).",
+  "basis": "Spans, summaries and SVD factors are written from surprisal before any query, so the writer is query-agnostic; the query-dependent zoom gate is a read-side addressing step. No ablation separates routing misses from low-rank write error, so Addressing and Write are I, and the gap to full KV (and the comparison with eviction) is Unassigned (Addressing, Write distortion). Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
   "read": "full text"
  },
  "ajewska2025understanding": {
@@ -61,10 +61,10 @@
   ],
   "currency": "tokens",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "-",
    "interference": "-",
-   "write": "I"
+   "write": "M"
   },
   "findings": [
    {
@@ -98,7 +98,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "The paper trains its own xRAG variants, and every compressor it evaluates encodes documents without the query, so it has a writer and is query-agnostic. Reconstruction probes point to Write distortion, but they are confounded with how the decoder reads and are not compared at equal compression ratios, so Write is I. The HotpotQA and GSM8K drops are Unassigned (Write distortion vs residual or interference).",
+  "basis": "The paper trains its own xRAG variants, and every compressor it evaluates encodes documents without the query, so it has a writer and is query-agnostic. Reconstruction probes point to Write distortion, but they are confounded with how the decoder reads and are not compared at equal compression ratios, so Write is I. The HotpotQA and GSM8K drops are Unassigned (Write distortion vs residual or interference). Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'. After independent grading: Table 6 compares writer variants (sentence and two-step pre-training) at the same number of encodings, isolating Write distortion at equal budget.",
   "read": "full text"
  },
  "an2024effective": {
@@ -301,7 +301,7 @@
   ],
   "currency": "tokens",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "U",
    "interference": "U",
    "write": "U"
@@ -328,7 +328,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "An end-to-end sweep of several chunkers with no writer of its own. Raising the context budget adds both answer-bearing chunks and distractors, and changing the chunking alters both what is stored and what is retrieved. Every finding therefore confounds Addressing, Interference and Write (U), and Section 5 may cite the context cliff only as Unassigned. No task bound exists: capacity floor unknown.",
+  "basis": "An end-to-end sweep of several chunkers with no writer of its own. Raising the context budget adds both answer-bearing chunks and distractors, and changing the chunking alters both what is stored and what is retrieved. Every finding therefore confounds Addressing, Interference and Write (U), and Section 5 may cite the context cliff only as Unassigned. No task bound exists: capacity floor unknown. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
   "read": "full text"
  },
  "bui2026make": {
@@ -346,8 +346,8 @@
   ],
   "currency": "entries",
   "grades": {
-   "capacity": "-",
-   "addressing": "-",
+   "capacity": "U",
+   "addressing": "I",
    "interference": "I",
    "write": "-"
   },
@@ -363,7 +363,7 @@
     "failure_mode": "Read-time crosstalk and dilution"
    }
   ],
-  "basis": "The retention score is computed once from the token embedding when the token enters the cache, so the writer is query-agnostic; the cache serves later turns in multi-turn dialogue (reuse flag). Proposition 3.1 is an argument about softmax dilution, not a bound on this system's loss, and no ablation isolates dilution, so Interference is I. The wins over heuristics fall under rule 5 without controls, so Addressing is I.",
+  "basis": "The retention score is computed once from the token embedding when the token enters the cache, so the writer is query-agnostic; the cache serves later turns in multi-turn dialogue (reuse flag). Proposition 3.1 is an argument about softmax dilution, not a bound on this system's loss, and no ablation isolates dilution, so Interference is I. The wins over heuristics fall under rule 5 without controls, so Addressing is I. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'. After independent grading: reports gains over SnapKV and Ada-KV at the same budget, an Addressing lower bound under rule 5.",
   "read": "full text"
  },
  "cao2026separating": {
@@ -559,7 +559,7 @@
   "grades": {
    "capacity": "-",
    "addressing": "M",
-   "interference": "I",
+   "interference": "M",
    "write": "-"
   },
   "findings": [
@@ -609,7 +609,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "Distracting and random passages are compared at the same count with the gold passage and its position fixed. That is the ledger's replace-with-dissimilar test, so Interference is M, and the Sec. 5 line 'suggestive but undecomposed' must be revised. Addressing M rests on the direct answer-in-top-k measurement for BM25 vs Contriever. The position effect is measured only with distractors present and has no sham control, so it stays Unassigned.",
+  "basis": "Distracting and random passages are compared at the same count with the gold passage and its position fixed. That is the ledger's replace-with-dissimilar test, so Interference is M, and the Sec. 5 line 'suggestive but undecomposed' must be revised. Addressing M rests on the direct answer-in-top-k measurement for BM25 vs Contriever. The position effect is measured only with distractors present and has no sham control, so it stays Unassigned. Revision: distracting and random passages are compared at the same count and the same gold positions (far/mid/near), which is the Interference test, so Interference is M; our earlier position-confound objection was wrong.",
   "read": "full text"
  },
  "ding2026controlled": {
@@ -1042,7 +1042,7 @@
   ],
   "currency": "tokens",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "-",
    "interference": "-",
    "write": "I"
@@ -1084,7 +1084,7 @@
     "failure_mode": "Write distortion"
    }
   ],
-  "basis": "The writer knows the task but not future observations, so it is proxy-query. Frozen memories are current values that were never written (rule 3 defers to rule 2), so they are Write distortion (omission), graded I because the evidence is qualitative. Success gains are Unassigned because distillation also trains the action policy, which confounds writing with reading.",
+  "basis": "The writer knows the task but not future observations, so it is proxy-query. Frozen memories are current values that were never written (rule 3 defers to rule 2), so they are Write distortion (omission), graded I because the evidence is qualitative. Success gains are Unassigned because distillation also trains the action policy, which confounds writing with reading. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
   "read": "full text"
  },
  "hsieh2024ruler": {
@@ -1103,7 +1103,7 @@
   "grades": {
    "capacity": "-",
    "addressing": "U",
-   "interference": "M",
+   "interference": "I",
    "write": "-"
   },
   "findings": [
@@ -1158,7 +1158,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "Swapping dissimilar filler for similar distractor needles at a fixed length, with the needle held fixed, is the ledger's Interference test, so Interference is M. Length-driven degradation mixes position, distractors, aggregation and residual reasoning, so Addressing is U and most findings are Unassigned. This fits the Section 4 sentence.",
+  "basis": "Swapping dissimilar filler for similar distractor needles at a fixed length, with the needle held fixed, is the ledger's Interference test, so Interference is M. Length-driven degradation mixes position, distractors, aggregation and residual reasoning, so Addressing is U and most findings are Unassigned. This fits the Section 4 sentence. After independent grading: the distractor-needle contrast fixes context length, not the number of competing items, so it does not isolate competitor similarity at a fixed count.",
   "read": "full text"
  },
  "huang2025mitigate": {
@@ -1283,7 +1283,7 @@
   "currency": "tokens",
   "grades": {
    "capacity": "U",
-   "addressing": "U",
+   "addressing": "I",
    "interference": "-",
    "write": "-"
   },
@@ -1329,7 +1329,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "The draft's 'ungraded' label is replaced. Same-budget selection-policy ablations are Addressing I under rule 5, with the confound that the better policy may have won by dropping competitors (Interference). The abstractive GPT-4 baseline is Write distortion I. The 25x-30x budget sweep confounds Capacity, Addressing and Interference (Capacity U), as Section 8 states.",
+  "basis": "The draft's 'ungraded' label is replaced. Same-budget selection-policy ablations are Addressing I under rule 5, with the confound that the better policy may have won by dropping competitors (Interference). The abstractive GPT-4 baseline is Write distortion I. The 25x-30x budget sweep confounds Capacity, Addressing and Interference (Capacity U), as Section 8 states. After independent grading: compares against Selective-Context and random selection at the same budget, an Addressing lower bound under rule 5.",
   "read": "full text"
  },
  "jiang2023longllmlingua": {
@@ -1346,7 +1346,7 @@
   ],
   "currency": "tokens",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "U",
    "interference": "U",
    "write": "M"
@@ -1388,7 +1388,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "Hard prompt compression rewrites text, so the substrate is natural-language text (per reviewer). Reordering and question-aware pruning change both item access and the competitor set with no count-matched sham, so Addressing and Interference are U, as in the Section 4 table. Subsequence recovery leaves the compressed prompt fixed and repairs only altered entities, so it isolates Write distortion (M).",
+  "basis": "Hard prompt compression rewrites text, so the substrate is natural-language text (per reviewer). Reordering and question-aware pruning change both item access and the competitor set with no count-matched sham, so Addressing and Interference are U, as in the Section 4 table. Subsequence recovery leaves the compressed prompt fixed and repairs only altered entities, so it isolates Write distortion (M). Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
   "read": "full text"
  },
  "jiang2026anatomy": {
@@ -1464,8 +1464,8 @@
   ],
   "currency": "entries",
   "grades": {
-   "capacity": "-",
-   "addressing": "U",
+   "capacity": "U",
+   "addressing": "I",
    "interference": "-",
    "write": "-"
   },
@@ -1496,7 +1496,7 @@
     "failure_mode": "Addressing drift and staleness"
    }
   ],
-  "basis": "We read only the abstract, so grades are capped at I. Addressing is I under rule 5 because there is no item-level or count-matched control: the better policy may win by dropping competitors. Looping is a reader symptom that eviction induces, and the abstract does not separate it from residual loss, so it stays Unassigned.",
+  "basis": "We read only the abstract, so grades are capped at I. Addressing is I under rule 5 because there is no item-level or count-matched control: the better policy may win by dropping competitors. Looping is a reader symptom that eviction induces, and the abstract does not separate it from residual loss, so it stays Unassigned. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'. After independent grading: its method improves over eviction baselines at the same budget, an Addressing lower bound under rule 5 (abstract-only cap holds).",
   "read": "abstract"
  },
  "laguna2026cartridges": {
@@ -1514,7 +1514,7 @@
   ],
   "currency": "entries",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "I",
    "interference": "M",
    "write": "U"
@@ -1561,7 +1561,7 @@
     "failure_mode": "Addressing miss at retrieval"
    }
   ],
-  "basis": "Comparing off-context queries against the no-context model isolates the perturbation, which the ledger counts as Interference, so it is graded M. The Cartridge is trained once via self-study, with no user query, and is reused across queries. Data mixing changes the write and the interference together, so Write is U, and the router's off-context gain is not assigned.",
+  "basis": "Comparing off-context queries against the no-context model isolates the perturbation, which the ledger counts as Interference, so it is graded M. The Cartridge is trained once via self-study, with no user query, and is reused across queries. Data mixing changes the write and the interference together, so Write is U, and the router's off-context gain is not assigned. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
   "read": "full text"
  },
  "lam2026governing": {
@@ -1637,7 +1637,7 @@
   ],
   "currency": "retrieved items (k)",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "U",
    "interference": "U",
    "write": "-"
@@ -1669,7 +1669,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "It evaluates 20 readers on a standard RAG pipeline and defines no writer of its own. When k grows, positional under-use, dilution and residual behaviour (refusals, instruction drift) all change together, so the accuracy drop is Unassigned. The draft may cite the drop under dilution only as Unassigned (Addressing, Interference).",
+  "basis": "It evaluates 20 readers on a standard RAG pipeline and defines no writer of its own. When k grows, positional under-use, dilution and residual behaviour (refusals, instruction drift) all change together, so the accuracy drop is Unassigned. The draft may cite the drop under dilution only as Unassigned (Addressing, Interference). Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
   "read": "full text"
  },
  "li2024snapkv": {
@@ -1686,7 +1686,7 @@
   ],
   "currency": "entries",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "I",
    "interference": "U",
    "write": "-"
@@ -1733,7 +1733,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "Under tightened rule 5, the pooling and H2O comparisons give no item-level eviction evidence and no count-matched control, so Addressing is I, not the M in the draft's Section 8 table. The 200-distractor gain may come from dropping competitors, so it is Unassigned (Addressing, Interference) rather than reduced Interference.",
+  "basis": "Under tightened rule 5, the pooling and H2O comparisons give no item-level eviction evidence and no count-matched control, so Addressing is I, not the M in the draft's Section 8 table. The 200-distractor gain may come from dropping competitors, so it is Unassigned (Addressing, Interference) rather than reduced Interference. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
   "read": "full text"
  },
  "liang2026rope": {
@@ -1749,7 +1749,7 @@
   ],
   "currency": "bits per entry",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "I",
    "interference": "-",
    "write": "M"
@@ -1801,7 +1801,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "The reading notes cite tables and appendices, and the record says full text, so the abstract-only concern is outdated and no cap applies. The draft's 'as reported in its abstract' should be dropped. Matched-budget allocation changes only stored precision, so Write distortion is M (rule 4). The 4^-b rate law describes the quantizer, not a capacity bound, so the capacity floor is unknown.",
+  "basis": "The reading notes cite tables and appendices, and the record says full text, so the abstract-only concern is outdated and no cap applies. The draft's 'as reported in its abstract' should be dropped. Matched-budget allocation changes only stored precision, so Write distortion is M (rule 4). The 4^-b rate law describes the quantizer, not a capacity bound, so the capacity floor is unknown. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
   "read": "full text"
  },
  "liu2023lost": {
@@ -1881,7 +1881,7 @@
   ],
   "currency": "bits per entry",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "I",
    "interference": "-",
    "write": "M"
@@ -1928,7 +1928,7 @@
     "failure_mode": "Write distortion"
    }
   ],
-  "basis": "Matched-bit layout ablations (per-token vs per-channel, residual window, group size) isolate the quantization error, so Write distortion is M. The addressing reading (key error that distorts attention scores) is ours and is not tested, so Addressing is I, which matches the draft's statement that the addressing reading is untested.",
+  "basis": "Matched-bit layout ablations (per-token vs per-channel, residual window, group size) isolate the quantization error, so Write distortion is M. The addressing reading (key error that distorts attention scores) is ours and is not tested, so Addressing is I, which matches the draft's statement that the addressing reading is untested. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
   "read": "full text"
  },
  "liu2025clusterkv": {
@@ -1945,7 +1945,7 @@
   ],
   "currency": "entries",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "I",
    "interference": "-",
    "write": "-"
@@ -1977,7 +1977,7 @@
     "failure_mode": "Addressing miss at retrieval"
    }
   ],
-  "basis": "Keys are clustered at prefill without the query, and the full KV stays offloaded. The write is therefore query-agnostic, the store is reused across decoding steps, and the query-dependent choice is a read-time address decision. The gains over Quest and InfiniGen are same-budget policy comparisons without item-level evidence or a count-matched control, so under rule 5 Addressing is I (possible confound: the better policy may have won by dropping competitors).",
+  "basis": "Keys are clustered at prefill without the query, and the full KV stays offloaded. The write is therefore query-agnostic, the store is reused across decoding steps, and the query-dependent choice is a read-time address decision. The gains over Quest and InfiniGen are same-budget policy comparisons without item-level evidence or a count-matched control, so under rule 5 Addressing is I (possible confound: the better policy may have won by dropping competitors). Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
   "read": "full text"
  },
  "maharana2024evaluating": {
@@ -1995,7 +1995,7 @@
   ],
   "currency": "several",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "-",
    "interference": "-",
    "write": "I"
@@ -2032,7 +2032,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "LoCoMo is a benchmark that evaluates several writers, so it has no write-time label and no reuse flag. Following the ledger's substrate rule, it is filed as natural-language text because the memories under discussion (observations and recursive summaries) are rewritten as text. None of its comparisons isolates a term (the summary loss is the authors' 'likely' explanation, and the top-k dilution has no count-matched control), so every non-capacity grade is I, and capacity has no bound.",
+  "basis": "LoCoMo is a benchmark that evaluates several writers, so it has no write-time label and no reuse flag. Following the ledger's substrate rule, it is filed as natural-language text because the memories under discussion (observations and recursive summaries) are rewritten as text. None of its comparisons isolates a term (the summary loss is the authors' 'likely' explanation, and the top-k dilution has no count-matched control), so every non-capacity grade is I, and capacity has no bound. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
   "read": "full text"
  },
  "mandal2026adaptive": {
@@ -2118,7 +2118,7 @@
   ],
   "currency": "entries",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "I",
    "interference": "-",
    "write": "-"
@@ -2165,7 +2165,7 @@
     "failure_mode": "Addressing drift and staleness"
    }
   ],
-  "basis": "Agents score tokens from keys, values and position only, so the writer is query-agnostic. All gains come from same-budget policy comparisons with no item-level eviction evidence or count-matched control, so Addressing is I under rule 5. Comparisons with TOVA and SnapKV also cross query-knowledge classes, which shifts the capacity floor.",
+  "basis": "Agents score tokens from keys, values and position only, so the writer is query-agnostic. All gains come from same-budget policy comparisons with no item-level eviction evidence or count-matched control, so Addressing is I under rule 5. Comparisons with TOVA and SnapKV also cross query-knowledge classes, which shifts the capacity floor. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
   "read": "full text"
  },
  "mu2023learning": {
@@ -2284,7 +2284,7 @@
   ],
   "currency": "tokens",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "I",
    "interference": "-",
    "write": "U"
@@ -2321,7 +2321,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "Under the ledger's substrate rule, agent memory written as text is natural-language text, whatever the paging mechanism. Facts and summaries are saved under memory pressure, before any future query is known, and are reused across sessions. The DMR gain confounds the baseline's lossy summary (write) with budget and read mechanism, so Write is U. Early stopping and too few lookups are observed but not isolated, so Addressing is I. Nested-lookup failures with gold pairs in context are residual, so they are left unassigned.",
+  "basis": "Under the ledger's substrate rule, agent memory written as text is natural-language text, whatever the paging mechanism. Facts and summaries are saved under memory pressure, before any future query is known, and are reused across sessions. The DMR gain confounds the baseline's lossy summary (write) with budget and read mechanism, so Write is U. Early stopping and too few lookups are observed but not isolated, so Addressing is I. Nested-lookup failures with gold pairs in context are residual, so they are left unassigned. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
   "read": "full text"
  },
  "qiu2026kvdiagnosis": {
@@ -2457,7 +2457,7 @@
   ],
   "currency": "retrieved items (k)",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "U",
    "interference": "U",
    "write": "U"
@@ -2494,7 +2494,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "Extraction happens at ingest without the question, so the writer is query-agnostic. The LongMemEval gains and drops do not separate extraction loss, retrieval misses and full-context dilution, so the cells are U, in line with the ledger's caution about thin agent-memory evidence. Community drift is Write distortion by definition but was not measured against accuracy.",
+  "basis": "Extraction happens at ingest without the question, so the writer is query-agnostic. The LongMemEval gains and drops do not separate extraction loss, retrieval misses and full-context dilution, so the cells are U, in line with the ledger's caution about thin agent-memory evidence. Community drift is Write distortion by definition but was not measured against accuracy. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
   "read": "full text"
  },
  "roy2026coverage": {
@@ -2575,7 +2575,7 @@
   "currency": "retrieved items (k)",
   "grades": {
    "capacity": "-",
-   "addressing": "M",
+   "addressing": "I",
    "interference": "U",
    "write": "-"
   },
@@ -2616,7 +2616,7 @@
     "failure_mode": "Addressing miss at retrieval"
    }
   ],
-  "basis": "Hits@k checks, item by item and at a fixed k, whether gold evidence that is in the index and fits in k is reached, so Addressing is M. The retrieved-vs-gold accuracy gap mixes misses and distractors (Addressing vs Interference). Gold-chunk failures are residual.",
+  "basis": "Hits@k checks, item by item and at a fixed k, whether gold evidence that is in the index and fits in k is reached, so Addressing is M. The retrieved-vs-gold accuracy gap mixes misses and distractors (Addressing vs Interference). Gold-chunk failures are residual. After independent grading: same-k retriever and reranker comparisons record misses per item but show no item-level repair or count-matched control, so under rule 5 they are lower bounds (I).",
   "read": "full text"
  },
  "uddin2026recall": {
@@ -2800,7 +2800,7 @@
   ],
   "currency": "tokens",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "I",
    "interference": "U",
    "write": "-"
@@ -2822,7 +2822,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "Rule 5 (tightened): no item-by-item evidence that baselines dropped the answer-bearing chunk and no count-matched control, and CARROT explicitly removes redundant chunks, so its gains may be reduced Interference; Addressing is I, not M as Sec. 7 says. The flat NaiveRAG curve confounds positional under-use and dilution, so it is Unassigned (Addressing, Interference).",
+  "basis": "Rule 5 (tightened): no item-by-item evidence that baselines dropped the answer-bearing chunk and no count-matched control, and CARROT explicitly removes redundant chunks, so its gains may be reduced Interference; Addressing is I, not M as Sec. 7 says. The flat NaiveRAG curve confounds positional under-use and dilution, so it is Unassigned (Addressing, Interference). Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
   "read": "full text"
  },
  "wei2026witcert": {
@@ -2879,7 +2879,7 @@
   ],
   "currency": "entries",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "I",
    "interference": "U",
    "write": "-"
@@ -2901,7 +2901,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "The staleness claim is speculative and the kNN-quality result is qualitative with no item-level test, so Addressing is I, not M. The larger-memory result confounds a retrieval miss with being outcompeted by added entries, so it is Unassigned (Addressing, Interference), and the Interference cell is U.",
+  "basis": "The staleness claim is speculative and the kNN-quality result is qualitative with no item-level test, so Addressing is I, not M. The larger-memory result confounds a retrieval miss with being outcompeted by added entries, so it is Unassigned (Addressing, Interference), and the Interference cell is U. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
   "read": "full text"
  },
  "xiong2026context": {
@@ -2961,7 +2961,7 @@
   ],
   "currency": "several",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "U",
    "interference": "U",
    "write": "-"
@@ -2983,7 +2983,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "This is an empirical comparison of several retrievers and context windows with no writer of its own, so query knowledge is '--'. It varies both tokens and k. Retrieval beating truncation at 4K is a policy comparison with no item-level evidence (rule 5: I). The more-chunks result confounds positional under-use with dilution, so it is Unassigned (Addressing, Interference).",
+  "basis": "This is an empirical comparison of several retrievers and context windows with no writer of its own, so query knowledge is '--'. It varies both tokens and k. Retrieval beating truncation at 4K is a policy comparison with no item-level evidence (rule 5: I). The more-chunks result confounds positional under-use with dilution, so it is Unassigned (Addressing, Interference). Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
   "read": "full text"
  },
  "yang2026jacap": {
@@ -3073,7 +3073,7 @@
   ],
   "currency": "entries",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "U",
    "interference": "-",
    "write": "I"
@@ -3090,7 +3090,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "Read only in abstract, so no cell can be above I. It scores tokens with averaged observed attention, which makes it proxy-query. Under rule 4, folded values leave the neighbouring entries present but altered, so this is Write distortion (I), not Interference as its placement in Sec. 5 implies. Its wins change both what is kept and what is written, so they are Unassigned (Addressing, Write distortion).",
+  "basis": "Read only in abstract, so no cell can be above I. It scores tokens with averaged observed attention, which makes it proxy-query. Under rule 4, folded values leave the neighbouring entries present but altered, so this is Write distortion (I), not Interference as its placement in Sec. 5 implies. Its wins change both what is kept and what is written, so they are Unassigned (Addressing, Write distortion). Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
   "read": "abstract"
  },
  "zahn2026attention": {
@@ -3109,9 +3109,9 @@
   ],
   "currency": "entries",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "I",
-   "interference": "I",
+   "interference": "M",
    "write": "I"
   },
   "findings": [
@@ -3171,7 +3171,7 @@
     "failure_mode": "Read-time crosstalk and dilution"
    }
   ],
-  "basis": "The ledger puts extracted facts and triples under natural-language text however they are later retrieved, so the introduction's external-index placement is overridden. Interference is I because the density sweep does not hold the item and competitor count fixed. Write is M because Table 9 measures extraction drift directly. The KO-vs-neural and N-scaling contrasts confound Capacity, Interference and Write, so they are Unassigned. Stale versions that are retained and read go to Interference under rule 3.",
+  "basis": "The ledger puts extracted facts and triples under natural-language text however they are later retrieved, so the introduction's external-index placement is overridden. Interference is I because the density sweep does not hold the item and competitor count fixed. Write is M because Table 9 measures extraction drift directly. The KO-vs-neural and N-scaling contrasts confound Capacity, Interference and Write, so they are Unassigned. Stale versions that are retained and read go to Interference under rule 3. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'. Revision: hash lookup versus embedding search over the same facts at the same count re-keys every competitor, the Interference test of Section 2.2, so Interference is M; the density sweep alone would be I.",
   "read": "full text"
  },
  "zeng2024structural": {
@@ -3254,7 +3254,7 @@
   ],
   "currency": "several",
   "grades": {
-   "capacity": "-",
+   "capacity": "U",
    "addressing": "U",
    "interference": "-",
    "write": "U"
@@ -3301,7 +3301,7 @@
     "failure_mode": "Write distortion"
    }
   ],
-  "basis": "The bit sweep at a fixed token count isolates write distortion (M). The token-for-precision gain is a same-budget policy comparison with no item-level evidence, so under rule 5 Addressing is I. The confound is that keeping more tokens also changes the competitor set. The pruners score tokens at prefill with the question in the prompt, so the writer is query-aware. Query knowledge is labelled by design: an observation-window scorer is proxy-query even when an evaluation puts the question inside the window.",
+  "basis": "The bit sweep at a fixed token count isolates write distortion (M). The token-for-precision gain is a same-budget policy comparison with no item-level evidence, so under rule 5 Addressing is I. The confound is that keeping more tokens also changes the competitor set. The pruners score tokens at prefill with the question in the prompt, so the writer is query-aware. Query knowledge is labelled by design: an observation-window scorer is proxy-query even when an evaluation puts the question inside the window. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
   "read": "full text"
  },
  "zhang2026mixkvq": {
@@ -3360,17 +3360,17 @@
  },
  "thiswork": {
   "key": "thiswork",
-  "short_name": "This work (Sec.~\\ref{sec:case})",
+  "short_name": "This work (Secs.~\\ref{sec:ann-exp}, \\ref{sec:case})",
   "kind": "analysis",
-  "substrate": "native KV entries",
+  "substrate": "several",
   "query_knowledge": "not applicable",
   "multi_query_reuse": false,
-  "operation": "protect item; vary competitors",
+  "operation": "protect item; vary competitors; approximate index",
   "grades": {
    "capacity": "U",
    "addressing": "M",
    "interference": "M",
-   "write": "-"
+   "write": "M"
   },
   "findings": [
    {
@@ -3402,14 +3402,26 @@
     "name": "Token-retention thresholds do not mark readability: 31-45% of TOVA answers on Task 1 are correct below threshold",
     "term": "unassigned",
     "failure_mode": "Unassigned"
+   },
+   {
+    "name": "HNSW search misses at the same k: restoring the lost gold paragraph repairs 73% of C->W rows vs 13% for a sham",
+    "term": "addressing",
+    "failure_mode": "Retrieval miss"
+   },
+   {
+    "name": "48-byte codes at equal budget: gold recall 61% (sign bits), 68% (PQ), 71% (OPQ)",
+    "term": "write",
+    "failure_mode": "Write distortion of keys"
    }
   ],
-  "basis": "Protection forces the answer-bearing item into the cache at the same budget and policy, and a count-matched sham that protects an equal-length non-answer span repairs almost nothing, so the repair comes from keeping the item. For query-aware runs the question determines the item, so the protected store is one the writer's class could build: the repair is a selection shortfall under rule 1 (Addressing M), and the protected store's loss bounds the capacity floor (B). For proxy-query and query-agnostic runs the repair is Unassigned (Capacity, Addressing). Competitor similarity is varied at a fixed count with the item present, which isolates Interference (M). Eviction does not alter stored entries, so Write distortion is not tested.",
+  "basis": "KV caches (Section 9): protection forces the answer-bearing item into the cache at the same budget and policy, and a count-matched sham that protects an equal-length non-answer span repairs almost nothing, so the repair comes from keeping the item. For query-aware runs the question determines the item, so the protected store is one the writer's class could build: the repair is a selection shortfall under rule 1 (Addressing M); the protected store's loss is an empirical upper bound on the capacity floor, which is not graded B, so Capacity stays U. For proxy-query and query-agnostic runs the repair is Unassigned (Capacity, Addressing). Competitor similarity is varied at a fixed count with the item present (Interference M), for two readers on Task 1. External index (Section 7): HNSW changes only the search at the same k, and restoring the lost gold paragraph repairs C->W rows beyond a count-matched sham (Addressing M); codes of equal size compared under exact search change only how keys are written (Write distortion M); quantized versus float vectors also change the budget (Unassigned).",
   "ops": [
+   "W",
    "S",
+   "A",
    "R"
   ],
-  "currency": "entries",
+  "currency": "several",
   "read": ""
  }
 }

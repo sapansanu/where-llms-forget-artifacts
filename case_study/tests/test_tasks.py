@@ -121,3 +121,23 @@ def test_sham_positions_disjoint_contiguous_and_reproducible():
     a = sham_positions(item, allowed, "ex-1")
     assert len(a) == 5 and a == list(range(a[0], a[0] + 5)) and not set(a) & set(item)
     assert a == sham_positions(item, allowed, "ex-1") and set(a) <= set(allowed)
+
+
+def test_ann_repair_is_count_matched_and_targets_lost_gold():
+    from memloss.ann import repair
+    exact, approx, gold = [1, 2, 3, 4, 5], [1, 9, 3, 8, 7], [2, 3]  # gold 2 lost, gold 3 kept
+    protect = repair(approx, exact, gold, "protect", 100, "q")
+    sham = repair(approx, exact, gold, "sham", 100, "q")
+    assert len(protect) == len(sham) == len(approx)
+    assert 2 in protect and 3 in protect and protect[:-1] == approx[:-1]  # lowest-ranked non-gold replaced
+    assert 2 not in sham and 3 in sham and sham[-1] in (4, 5)  # a non-gold paragraph the approximate list lost
+
+
+def test_ann_corpus_dedups_and_maps_gold():
+    from memloss.ann import corpus_and_queries
+    row = lambda i, ans: {"id": str(i), "question": f"q{i}", "answer": ans,
+                          "context": {"title": ["A", "B"], "sentences": [["a1 ", "a2"], ["b1"]]},
+                          "supporting_facts": {"title": ["B", "A", "B"], "sent_id": [0, 0, 0]}}
+    paras, queries = corpus_and_queries([row(0, "x"), row(1, "yes"), row(2, "z")], n=2, seed=0)
+    assert paras == [("A", "a1 a2"), ("B", "b1")]
+    assert all(q["answer"] != "yes" and q["gold"] == [0, 1] for q in queries)

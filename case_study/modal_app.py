@@ -1,10 +1,12 @@
 """Run the case study on Modal GPUs, sharded across containers. Results land in the `memloss-results` volume.
 
-    modal run modal_app.py --task A --n 2 --shards 1 --tag pilot-   # timing and accuracy check first
-    modal run modal_app.py --task A --n 60 --shards 4
-    modal run modal_app.py --task B --n 100 --shards 4 --max-new-tokens 24
-    modal run modal_app.py --task A --n 60 --shards 2 --n-records 1400 --conditions full --qk agnostic --tag sweep-N1400-
-    modal run modal_app.py --task A --n 60 --shards 4 --protect --tag v2-protect-   # item kept at the same budget
+    modal run modal_app.py::main --task A --n 2 --shards 1 --tag pilot-   # timing and accuracy check first
+    modal run modal_app.py::main --task A --n 60 --shards 4
+    modal run modal_app.py::main --task B --n 100 --shards 4 --max-new-tokens 24
+    modal run modal_app.py::main --task A --n 60 --shards 2 --n-records 1400 --conditions full --qk agnostic --tag sweep-N1400-
+    modal run modal_app.py::main --task A --n 60 --shards 4 --protect --tag v2-protect-   # item kept at the same budget
+    modal run modal_app.py::keysim --model mistralai/Mistral-7B-Instruct-v0.3   # key similarity inside the reader
+    modal run modal_app.py::ann --n 500                                            # Section 7: ANN vs exact search
     modal volume get memloss-results / results/
 
 Library versions are pinned to the ones the harness was tested with locally."""
@@ -15,7 +17,8 @@ app = modal.App("memloss-case-study")
 
 image = (
     modal.Image.debian_slim(python_version="3.12")
-    .pip_install("torch==2.14.1", "transformers==5.2.0", "kvpress==0.5.5", "datasets==5.0.1", "accelerate")
+    .pip_install("torch==2.14.1", "transformers==5.2.0", "kvpress==0.5.5", "datasets==5.0.1", "accelerate",
+                 "faiss-cpu==1.15.1")
     .add_local_python_source("memloss")
 )
 results = modal.Volume.from_name("memloss-results", create_if_missing=True)
@@ -47,3 +50,40 @@ def main(task: str = "A", n: int = 60, shards: int = 4, max_new_tokens: int = 16
     args = [(task, n, s, shards, max_new_tokens, model, tag, n_records, conditions, qk, protect, sham) for s in range(shards)]
     for path in run_shard.starmap(args):
         print("done:", path)
+
+
+@app.function(image=image, gpu="A100-80GB", timeout=2 * 3600, memory=32768,
+              volumes={"/results": results, "/root/.cache/huggingface": hf_cache})
+def keysim_job(model: str, n: int) -> str:
+    import subprocess
+    import sys
+
+    out = f"/results/keysim-{model.split('/')[-1]}.json"
+    subprocess.run([sys.executable, "-m", "memloss.keysim", "--model", model, "--n", str(n), "--out", out], check=True)
+    results.commit()
+    hf_cache.commit()
+    return out
+
+
+@app.function(image=image, gpu="A100-80GB", timeout=4 * 3600, memory=32768,
+              volumes={"/results": results, "/root/.cache/huggingface": hf_cache})
+def ann_job(n: int, configs: str = "", tag: str = "") -> str:
+    import subprocess
+    import sys
+
+    out = f"/results/ann-{tag}n{n}.jsonl"
+    subprocess.run([sys.executable, "-m", "memloss.ann", "--n", str(n), "--out", out] +
+                   (["--configs", configs] if configs else []), check=True)
+    results.commit()
+    hf_cache.commit()
+    return out
+
+
+@app.local_entrypoint()
+def keysim(model: str = "Qwen/Qwen2.5-7B-Instruct", n: int = 10):
+    print("done:", keysim_job.remote(model, n))
+
+
+@app.local_entrypoint()
+def ann(n: int = 500, configs: str = "", tag: str = ""):
+    print("done:", ann_job.remote(n, configs, tag))
