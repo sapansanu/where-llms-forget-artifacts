@@ -1,6 +1,6 @@
 """The statistics the paper's text quotes from the case study (Section 9 and Supplementary Appendix B), from the logs.
 
-Tables 4 and 8 and Fig. 2 come from ann_analyze.py, paper_table.py and figure.py, the load sweeps and regressions from
+Tables 4 and 7 and Fig. 2 come from ann_analyze.py, paper_table.py and figure.py, the load sweeps and regressions from
 analyze.py, and the Mistral replication from second_reader.py. This script computes the remaining numbers in the text:
 pooled repair rates, the neighbour and closeness analyses, the retention-threshold check, gap recovery, the
 protected-store bounds on Capacity, the TF-IDF and length descriptives of Task 2, and the key similarities.

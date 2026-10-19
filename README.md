@@ -5,7 +5,7 @@ Companion code and data for the paper *Why Compressed LLM Memory Forgets: An Ass
 The repository has two parts:
 
 - `case_study/` holds the code, logged runs and analysis behind the paper's experiments:
-  - Section 9 (Table 8 and Fig. 2): protecting the answer-bearing item, or a count-matched sham span, inside compressed
+  - Section 9 (Table 7 and Fig. 2): protecting the answer-bearing item, or a count-matched sham span, inside compressed
     KV caches, with Qwen2.5-7B-Instruct and, for Task 1, Mistral-7B-Instruct-v0.3;
   - Section 7.6 (Table 4): approximate (HNSW) and compressed (product-quantization) retrieval indexes against exact
     search, with the same protect-versus-sham repair.
@@ -27,7 +27,7 @@ Supplementary Appendix B of the paper gives the full setup.
 | `memloss/run.py` | Runs one shard of a task under each compression condition and writes one JSON line per query. |
 | `memloss/scoring.py` | Scoring: code containment (Task 1); exact match after HotpotQA normalization (Task 2). |
 | `memloss/analyze.py` | Paired C→W analysis, repair rates with Wilson intervals, McNemar tests, sham controls, the load sweep and clustered logistic regressions. |
-| `memloss/paper_table.py` | Writes the paper's Table 8 from the logged runs. |
+| `memloss/paper_table.py` | Writes the paper's Table 7 from the logged runs. |
 | `memloss/figure.py` | Draws the paper's Fig. 2 from the logged runs. |
 | `memloss/second_reader.py` | The Task 1 replication with Mistral-7B: repairs, breaks and the load sweep (Section 9). |
 | `memloss/keysim.py` | Key similarity inside the reader: input embeddings and pre-RoPE attention keys per layer. |
@@ -65,7 +65,7 @@ uv run python -m memloss.ann_analyze results/ann/ann-n500.jsonl results/ann/ann-
 uv run python -m memloss.paper_stats --out results/final/paper_stats.json
 ```
 
-These commands regenerate `results/final/`, the paper's Tables 4 and 8 and the statistics in its text exactly from the logs. `paper_stats` also rebuilds the Task 2 examples, so it downloads HotpotQA and the Qwen tokenizer. (On macOS, set
+These commands regenerate `results/final/`, the paper's Tables 4 and 7 and the statistics in its text exactly from the logs. `paper_stats` also rebuilds the Task 2 examples, so it downloads HotpotQA and the Qwen tokenizer. (On macOS, set
 `KMP_DUPLICATE_LIB_OK=TRUE` for `ann_analyze`, because torch and faiss each ship an OpenMP runtime.)
 
 ### Rerunning the experiments
