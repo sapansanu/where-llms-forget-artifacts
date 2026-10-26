@@ -2,7 +2,7 @@
 
 Tables 4 and 7 and Fig. 2 come from ann_analyze.py, paper_table.py and figure.py, the load sweeps and regressions from
 analyze.py, and the Mistral replication from second_reader.py. This script computes the remaining numbers in the text:
-pooled repair rates, the neighbour and closeness analyses, the retention-threshold check, gap recovery, the
+pooled repair rates (with intervals that resample whole questions), the neighbour and closeness analyses, the retention-threshold check, gap recovery, the
 protected-store bounds on Capacity, the TF-IDF and length descriptives of Task 2, and the key similarities.
 
     python -m memloss.paper_stats --out results/final/paper_stats.json
@@ -24,6 +24,38 @@ import pandas as pd
 from memloss import tasks
 from memloss.analyze import add_answer_elsewhere, hypothesis_test, load, wilson
 from memloss.second_reader import _neighbours, load_effect, repairs
+
+
+def clustered_repairs(cw: pd.DataFrame, cluster: str, n_boot: int = 10000, seed: int = 20261025) -> dict:
+    """Repair rates of protection and the sham over C->W rows, with 95% percentile intervals from resampling whole
+    clusters (a query recurs across policies, budgets or search beams, so its rows are not independent), and the same
+    interval for the protect-minus-sham difference."""
+    p, s = cw["prot"].astype(float).to_numpy(), cw["sham"].astype(float).to_numpy()
+    groups = [np.flatnonzero(cw[cluster].to_numpy() == c) for c in pd.unique(cw[cluster])]
+    rng = np.random.default_rng(seed)
+    boots = []
+    for _ in range(n_boot):
+        idx = np.concatenate([groups[i] for i in rng.integers(0, len(groups), len(groups))])
+        boots.append((p[idx].mean(), s[idx].mean()))
+    b = np.array(boots)
+    ci = lambda x: [float(v) for v in np.percentile(x, [2.5, 97.5])]
+    return {"rows": len(cw), "clusters": len(groups), "protect": float(p.mean()), "protect_ci": ci(b[:, 0]),
+            "sham": float(s.mean()), "sham_ci": ci(b[:, 1]), "difference": float(p.mean() - s.mean()),
+            "difference_ci": ci(b[:, 0] - b[:, 1]),
+            "wilson_protect_ci": list(wilson(int(p.sum()), len(p))), "wilson_sham_ci": list(wilson(int(s.sum()), len(s)))}
+
+
+def _repair_rows(df: pd.DataFrame) -> pd.DataFrame:
+    """One row per (example, policy, budget, query knowledge) with as-run, protected, sham and full-cache outcomes."""
+    full = df[df.press == "full"].set_index(["id", "qk"]).correct
+    comp = df[df.press != "full"].copy()
+    comp["mode"] = np.where(comp.protected, "prot", np.where(comp.sham, "sham", "run"))
+    w = comp.pivot_table(index=["id", "press", "ratio", "qk"], columns="mode", values="correct", aggfunc="first").reset_index()
+    w["full"] = [bool(full[(i, q)]) for i, q in zip(w.id, w.qk)]
+    for c in ("run", "prot", "sham"):
+        w[c] = w[c].astype(bool)
+    w["qa"] = (w.qk == "aware") & (w.press != "streaming")
+    return w[w.full & ~w.run]
 
 
 def _owner_and_distance(e: tasks.Example) -> tuple[dict, dict]:
@@ -73,7 +105,15 @@ def task1(results: str) -> dict:
                                                       "share": b.correct.mean()}
     m = load(g("mistral/mistral-sweep-*.jsonl"))
     m = m[(m.press == "full") & (m.qk == "agnostic")]
-    return {"repairs": repairs(main), "load": load_effect(sweep),
+    clustering = {}
+    for name, runs in (("qwen", main), ("mistral", load(g("mistral/mistral-A-*.jsonl") + g("mistral/mistral-protect-A-*.jsonl")
+                                                         + g("mistral/mistral-sham-A-*.jsonl")))):
+        cw = _repair_rows(runs)
+        for subset, rows in (("all", cw), ("query_aware", cw[cw.qa])):
+            r = clustered_repairs(rows, "id")
+            shift = max(abs(a - b) for a, b in zip(r["protect_ci"] + r["sham_ci"], r["wilson_protect_ci"] + r["wilson_sham_ci"]))
+            clustering[f"{name} {subset}"] = {**r, "max_shift_vs_wilson": shift}
+    return {"repairs": repairs(main), "clustered_repairs": clustering, "load": load_effect(sweep),
             "one_digit_neighbours_mean": hi.groupby("n_records").n_ham1.mean().to_dict(),
             "closeness_qwen": closeness(sweep), "closeness_mistral": closeness(m),
             "tova_correct_below_threshold": below}
@@ -93,6 +133,8 @@ def task2(results: str) -> dict:
     df = load(g("full/B-*.jsonl") + g("full/protect-B-*.jsonl") + g("full/sham-B-*.jsonl"))
     df = df[df["item"] == "answer"]
     out = {"repairs": repairs(df)}
+    cw = _repair_rows(df).merge(df[["id", "hotpot_id"]].drop_duplicates("id"), on="id")
+    out["clustered_repairs"] = {"query_aware": clustered_repairs(cw[cw.qa], "hotpot_id"), "all": clustered_repairs(cw, "hotpot_id")}
     # C->W repair per condition, and recovery of the gap to the full cache with each condition's protected accuracy
     # capped at the full cache's.
     comp = df[df.press != "full"].copy()
@@ -187,6 +229,19 @@ def task2_descriptives(seed: int = 0) -> dict:
             "median_protected_fill": {k: statistics.median(v) for k, v in fill.items()}}
 
 
+def retrieval(results: str) -> dict:
+    """Section 7.6: protection and sham repairs pooled over HNSW beams and over quantized codes, clustered on the
+    question (a question can lose gold under several configurations)."""
+    paths = [f"{results}/ann/ann-n500.jsonl", f"{results}/ann/ann-eq48-n500.jsonl"]
+    df = pd.concat([pd.DataFrame(json.loads(line) for line in open(p)).assign(run=i) for i, p in enumerate(paths)])
+    df = df[df["run"] == df.groupby("config")["run"].transform("min")]
+    out = {}
+    for family in ("hnsw", "pq"):
+        g = df[df["config"].str.startswith(family) & df["protect_correct"].notna()]
+        out[family] = clustered_repairs(g.rename(columns={"protect_correct": "prot", "sham_correct": "sham"}), "id")
+    return out
+
+
 def keysim(results: str) -> dict:
     out = {}
     for path in sorted(glob.glob(f"{results}/keysim/keysim-*.json")):
@@ -206,7 +261,8 @@ def main() -> None:
     ap.add_argument("--out", required=True)
     ap.add_argument("--no-descriptives", action="store_true", help="skip the Task 2 descriptives (dataset, tokenizer)")
     args = ap.parse_args()
-    out = {"task1_qwen": task1(args.results), "task2_qwen": task2(args.results), "key_similarity": keysim(args.results)}
+    out = {"task1_qwen": task1(args.results), "task2_qwen": task2(args.results), "retrieval": retrieval(args.results),
+           "key_similarity": keysim(args.results)}
     if not args.no_descriptives:
         out["task2_descriptives"] = task2_descriptives()
     with open(args.out, "w") as f:

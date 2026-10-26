@@ -59,10 +59,11 @@ def paper_table(t: pd.DataFrame, n: int, n_paras: int) -> str:
         "\\caption{Retrieval experiment (Section~\\ref{sec:ann-exp}): " + f"{n} HotpotQA questions over {n_paras:,} "
         "paragraphs, $k=5$, Qwen2.5-7B-Instruct reader. Gold: share of gold paragraphs retrieved (\\%). EM: exact "
         "match (\\%). C$\\to$W: questions correct with exact search and wrong here (in parentheses, those whose list "
-        "lost a gold paragraph). Repaired: share of those rows repaired by putting the lost gold paragraph back "
+        "lost a gold paragraph). Repaired: share of those rows repaired by putting the lost gold paragraphs back "
         "(prot.) or the same number of lost non-gold paragraphs (sham), at the same $k$ (\\%). Codes: bytes per "
         "384-dimensional vector (1,536~B as floats). Quantized: product quantization; rotated: product quantization "
-        "after a learned rotation (OPQ); sign bits: those of 384 random projections.}",
+        "after a learned rotation (OPQ); sign bits: those of 384 random projections. HNSW: hierarchical navigable "
+        "small-world graph, searched with beam width ef.}",
         "\\label{tab:ann}", "\\footnotesize", "\\setlength{\\tabcolsep}{2.5pt}",
         "\\begin{tabular}{@{}lcccc@{}}", "\\toprule",
         "Index & Gold & EM & C$\\to$W (lost gold) & Repaired: prot.\\,/\\,sham \\\\", "\\midrule", *rows,

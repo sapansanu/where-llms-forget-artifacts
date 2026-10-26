@@ -5,9 +5,9 @@ Companion code and data for the paper *Why Compressed LLM Memory Forgets: An Ass
 The repository has two parts:
 
 - `case_study/` holds the code, logged runs and analysis behind the paper's experiments:
-  - Section 9 (Table 7 and Fig. 2): protecting the answer-bearing item, or a count-matched sham span, inside compressed
+  - Section 9 (Table 8 and Fig. 2): protecting the answer-bearing item, or a count-matched sham span, inside compressed
     KV caches, with Qwen2.5-7B-Instruct and, for Task 1, Mistral-7B-Instruct-v0.3;
-  - Section 7.6 (Table 4): approximate (HNSW) and compressed (product-quantization) retrieval indexes against exact
+  - Section 7.6 (Table 5): approximate (HNSW) and compressed (product-quantization) retrieval indexes against exact
     search, with the same protect-versus-sham repair.
 - `literature/` holds the classification registry behind Table 1 and the cited references.
 
@@ -27,13 +27,13 @@ Supplementary Appendix B of the paper gives the full setup.
 | `memloss/run.py` | Runs one shard of a task under each compression condition and writes one JSON line per query. |
 | `memloss/scoring.py` | Scoring: code containment (Task 1); exact match after HotpotQA normalization (Task 2). |
 | `memloss/analyze.py` | Paired C→W analysis, repair rates with Wilson intervals, McNemar tests, sham controls, the load sweep and clustered logistic regressions. |
-| `memloss/paper_table.py` | Writes the paper's Table 7 from the logged runs. |
+| `memloss/paper_table.py` | Writes the paper's Table 8 from the logged runs. |
 | `memloss/figure.py` | Draws the paper's Fig. 2 from the logged runs. |
 | `memloss/second_reader.py` | The Task 1 replication with Mistral-7B: repairs, breaks and the load sweep (Section 9). |
 | `memloss/keysim.py` | Key similarity inside the reader: input embeddings and pre-RoPE attention keys per layer. |
 | `memloss/ann.py` | The retrieval experiment: exact, HNSW and quantized indexes over HotpotQA paragraphs, the reader, and the protect/sham repairs. |
-| `memloss/ann_analyze.py` | Summarizes the retrieval experiment and writes the paper's Table 4. |
-| `memloss/paper_stats.py` | Computes the remaining statistics quoted in the text (pooled repairs, neighbour and closeness analyses, retention thresholds, gap recovery, protected-store bounds, Task 2 descriptives, key similarities). |
+| `memloss/ann_analyze.py` | Summarizes the retrieval experiment and writes the paper's Table 5. |
+| `memloss/paper_stats.py` | Computes the remaining statistics quoted in the text (pooled repairs with intervals that resample whole questions, neighbour and closeness analyses, retention thresholds, gap recovery, protected-store bounds, Task 2 descriptives, key similarities). |
 | `modal_app.py` | Runs shards on Modal A100-80GB GPUs. |
 | `tests/` | Tests for generator reproducibility across processes, protection at the same budget, sham placement and answer spans. |
 | `results/v2/` | Task 1 logs: main runs (`v2-A-*`), protected (`v2-protect-A-*`), sham (`v2-sham-A-*`) and the full-cache load sweep at 700 and 1,400 records (`v2-sweep-N*`). |
@@ -111,6 +111,7 @@ were discarded, are not included here, and are not used in the paper.
 
 ## Literature registry
 
+`literature/screening.csv` lists all 1,458 search candidates with the LLM screen's role, the ranking score and whether each entered the corpus (Supplementary Appendix C).
 `literature/registry.json` holds one record per classified study in Table 1. Each record gives the storage
 substrate, budget currency, operation codes (W/S/A/R), write-time query knowledge, and an evidence grade for each term.
 The grades are M (measured), B (bounded), I (inferred), U (unassigned) or "-" (not addressed). Each record also lists

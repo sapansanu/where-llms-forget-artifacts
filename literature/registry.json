@@ -3111,7 +3111,7 @@
   "grades": {
    "capacity": "U",
    "addressing": "I",
-   "interference": "M",
+   "interference": "I",
    "write": "I"
   },
   "findings": [
@@ -3171,7 +3171,7 @@
     "failure_mode": "Read-time crosstalk and dilution"
    }
   ],
-  "basis": "The ledger puts extracted facts and triples under natural-language text however they are later retrieved, so the introduction's external-index placement is overridden. Interference is I because the density sweep does not hold the item and competitor count fixed. Write is M because Table 9 measures extraction drift directly. The KO-vs-neural and N-scaling contrasts confound Capacity, Interference and Write, so they are Unassigned. Stale versions that are retained and read go to Interference under rule 3. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'. Revision: hash lookup versus embedding search over the same facts at the same count re-keys every competitor, the Interference test of Section 2.2, so Interference is M; the density sweep alone would be I.",
+  "basis": "The ledger puts extracted facts and triples under natural-language text however they are later retrieved, so the introduction's external-index placement is overridden. Interference is I because the density sweep does not hold the item and competitor count fixed. Write is M because Table 9 measures extraction drift directly. The KO-vs-neural and N-scaling contrasts confound Capacity, Interference and Write, so they are Unassigned. Stale versions that are retained and read go to Interference under rule 3. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'. Revision: hash lookup versus embedding search over the same facts at the same count re-keys every competitor, the Interference test of Section 2.2, so Interference is M; the density sweep alone would be I. Revision (2026-10-25, outside review): hashing also re-keys the target and replaces similarity search with exact lookup on a parsed subject and predicate, so the target is not held fixed and the hash-versus-embedding contrast changes Addressing with Interference (Unassigned); Interference stays I on the density sweep. Write distortion is I: schema drift is observed without an intervention or a measured loss.",
   "read": "full text"
  },
  "zeng2024structural": {
@@ -3374,12 +3374,12 @@
   },
   "findings": [
    {
-    "name": "Query-aware eviction: keeping the answer-bearing item at the same budget repairs 99.9% (Task 1) and 63% (Task 2) of C-to-W rows; a count-matched sham repairs 0.4% and 6.5%",
+    "name": "Query-aware eviction: keeping the answer-bearing item at the same budget repairs 99.8% (Task 1) and 63% (Task 2) of query-aware C-to-W rows; a count-matched sham repairs 2.0% and 6.5%",
     "term": "addressing",
     "failure_mode": "Selection shortfall"
    },
    {
-    "name": "Protected query-aware stores within the budget bound the capacity floor: at most 1% loss on Task 1; about zero on Task 2 at a 25% budget",
+    "name": "Protected query-aware stores within the budget bound the capacity floor: no loss against the full cache on Task 1; about zero on Task 2 at a 25% budget",
     "term": "capacity",
     "failure_mode": "Capacity saturation"
    },
@@ -3399,7 +3399,7 @@
     "failure_mode": "Read-time crosstalk and dilution"
    },
    {
-    "name": "Token-retention thresholds do not mark readability: 31-45% of TOVA answers on Task 1 are correct below threshold",
+    "name": "Token-retention thresholds do not mark readability: 31-43% of TOVA answers on Task 1 are correct below the half-the-tokens threshold (31-45% under stricter definitions)",
     "term": "unassigned",
     "failure_mode": "Unassigned"
    },
