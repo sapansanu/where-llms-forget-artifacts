@@ -1,6 +1,6 @@
 # Why Compressed LLM Memory Forgets: code and data
 
-Companion code and data for the paper *Why Compressed LLM Memory Forgets: An Associative-Memory Survey* by Sapan Tiwari.
+Companion code and data for the paper *Why Compressed LLM Memory Forgets: An Associative-Memory Survey* by Sapan Tiwari and Dhruv Sawhney.
 
 The repository has two parts:
 
