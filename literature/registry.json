@@ -381,7 +381,7 @@
   "currency": "several",
   "grades": {
    "capacity": "U",
-   "addressing": "I",
+   "addressing": "U",
    "interference": "-",
    "write": "-"
   },
@@ -407,7 +407,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "Read in abstract only, so no cell can be above I. The construction does not bound the best store, so content lost beyond the cache is Unassigned (Capacity, Addressing). The contract spans KV, recurrent and retrieval state, so the substrate is 'several' and the study defines no writer.",
+  "basis": "Read in abstract only, so no cell can be above I. The construction does not bound the best store, so content lost beyond the cache is Unassigned (Capacity, Addressing). The contract spans KV, recurrent and retrieval state, so the substrate is 'several' and the study defines no writer. Revision (2026-10-26, review round): no finding isolates Addressing, and content lost beyond the active cache is Unassigned (Capacity, Addressing), so the Addressing cell is U, not I.",
   "read": "abstract"
  },
  "chen2023benchmarking": {
@@ -575,8 +575,8 @@
    },
    {
     "name": "Gold position near > far > mid with distractors present",
-    "term": "unassigned",
-    "failure_mode": "Unassigned"
+    "term": "addressing",
+    "failure_mode": "Positional under-use"
    },
    {
     "name": "Random passages near gold can improve accuracy (oracle)",
@@ -596,7 +596,7 @@
    {
     "name": "BM25 retrieves more answer-containing passages than Contriever at each k",
     "term": "addressing",
-    "failure_mode": "Addressing miss at retrieval"
+    "failure_mode": "Retrieval miss"
    },
    {
     "name": "Retrieving 3-5 passages is optimal",
@@ -609,7 +609,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "Distracting and random passages are compared at the same count with the gold passage and its position fixed. That is the ledger's replace-with-dissimilar test, so Interference is M, and the Sec. 5 line 'suggestive but undecomposed' must be revised. Addressing M rests on the direct answer-in-top-k measurement for BM25 vs Contriever. The position effect is measured only with distractors present and has no sham control, so it stays Unassigned. Revision: distracting and random passages are compared at the same count and the same gold positions (far/mid/near), which is the Interference test, so Interference is M; our earlier position-confound objection was wrong.",
+  "basis": "Distracting and random passages are compared at the same count with the gold passage and its position fixed. That is the ledger's replace-with-dissimilar test, so Interference is M, and the Sec. 5 line 'suggestive but undecomposed' must be revised. Addressing M rests on the direct answer-in-top-k measurement for BM25 vs Contriever. The position effect is measured only with distractors present and has no sham control, so it stays Unassigned. Revision: distracting and random passages are compared at the same count and the same gold positions (far/mid/near), which is the Interference test, so Interference is M; our earlier position-confound objection was wrong. Revision (2026-10-26, review round): the gold-position sweep moves only the answer-bearing passage with the same distractors at the same count, the design that makes Liu et al.'s position sweep Addressing M, so the position effect is Addressing (M) and carries the cell; the BM25-versus-Contriever comparison is a same-k comparison without item-level repair and, as for MultiHop-RAG, bears only an I grade under rule 5. The cell stays M.",
   "read": "full text"
  },
  "ding2026controlled": {
@@ -1007,8 +1007,8 @@
    },
    {
     "name": "RULER average falls 56.40->36.54 at 2 bits; MKey3 to 0",
-    "term": "write",
-    "failure_mode": "Write distortion"
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
    },
    {
     "name": "Passkey retrieval degrades at 2 bits and 32K on 70B",
@@ -1026,7 +1026,7 @@
     "failure_mode": "Write distortion"
    }
   ],
-  "basis": "Matched-bit layout ablations change only how entries are quantized, so the stored item is altered but present (rule 4) and Write distortion is M. The loss is decided at write; Section 6's 'Write→Address' marks where it shows up, not a second decision point. No capacity bound is given (capacity floor unknown).",
+  "basis": "Matched-bit layout ablations change only how entries are quantized, so the stored item is altered but present (rule 4) and Write distortion is M. The loss is decided at write; Section 6's 'Write→Address' marks where it shows up, not a second decision point. No capacity bound is given (capacity floor unknown). Revision (2026-10-26, review round): the 2-bit RULER drop is a cross-model contrast that also lowers the bit budget, so it is Unassigned (Capacity, Write distortion), as the text says.",
   "read": "full text"
  },
  "hoy2026continuous": {
@@ -1523,22 +1523,22 @@
    {
     "name": "Cartridges degrade off-context behaviour (MMLU, IFEval, contamination) more than full context",
     "term": "interference",
-    "failure_mode": "Read-time crosstalk and dilution"
+    "failure_mode": "Off-context perturbation"
    },
    {
     "name": "Cartridges fail to abstain, answering as if absent evidence were in the document",
     "term": "interference",
-    "failure_mode": "Read-time crosstalk and dilution"
+    "failure_mode": "Off-context perturbation"
    },
    {
     "name": "Moving query/answer position lowers interference only with the on-context gain (positional convention ruled out)",
     "term": "interference",
-    "failure_mode": "Read-time crosstalk and dilution"
+    "failure_mode": "Off-context perturbation"
    },
    {
     "name": "Longer training does not remove the degradation; multi-turn does not compound it",
     "term": "interference",
-    "failure_mode": "Read-time crosstalk and dilution"
+    "failure_mode": "Off-context perturbation"
    },
    {
     "name": "Eviction stays near no-context off-context but loses on-context fidelity",
@@ -1561,7 +1561,7 @@
     "failure_mode": "Addressing miss at retrieval"
    }
   ],
-  "basis": "Comparing off-context queries against the no-context model isolates the perturbation, which the ledger counts as Interference, so it is graded M. The Cartridge is trained once via self-study, with no user query, and is reused across queries. Data mixing changes the write and the interference together, so Write is U, and the router's off-context gain is not assigned. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
+  "basis": "Comparing off-context queries against the no-context model isolates the perturbation, which the ledger counts as Interference, so it is graded M. The Cartridge is trained once via self-study, with no user query, and is reused across queries. Data mixing changes the write and the interference together, so Write is U, and the router's off-context gain is not assigned. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'. Revision (2026-10-26, review round): the off-context findings are labelled with the ledger's off-context perturbation mode, as in the Interference table.",
   "read": "full text"
  },
  "lam2026governing": {
@@ -2892,8 +2892,8 @@
    },
    {
     "name": "About 90% approximate kNN recall; no significant degradation with lower-quality kNN (qualitative)",
-    "term": "addressing",
-    "failure_mode": "Addressing miss at retrieval"
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
    },
    {
     "name": "With larger memory some tokens get worse, possibly because a relevant memory leaves the top-k",
@@ -2901,7 +2901,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "The staleness claim is speculative and the kNN-quality result is qualitative with no item-level test, so Addressing is I, not M. The larger-memory result confounds a retrieval miss with being outcompeted by added entries, so it is Unassigned (Addressing, Interference), and the Interference cell is U. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'.",
+  "basis": "The staleness claim is speculative and the kNN-quality result is qualitative with no item-level test, so Addressing is I, not M. The larger-memory result confounds a retrieval miss with being outcompeted by added entries, so it is Unassigned (Addressing, Interference), and the Interference cell is U. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'. Revision (2026-10-26, review round): the kNN-recall result does not separate a miss from being outcompeted, so it is Unassigned, as the text says.",
   "read": "full text"
  },
  "xiong2026context": {
@@ -3267,18 +3267,18 @@
    },
    {
     "name": "At equal memory, cutting tokens hurts more than cutting precision",
-    "term": "addressing",
-    "failure_mode": "Addressing miss at retrieval"
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
    },
    {
     "name": "Quantized pruning gains on RULER at 1/16 budget (67.5 to 82.2)",
-    "term": "addressing",
-    "failure_mode": "Addressing miss at retrieval"
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
    },
    {
     "name": "Throughput-matched: 512 tokens at 4-bit beats 128 at 16-bit",
-    "term": "addressing",
-    "failure_mode": "Addressing miss at retrieval"
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
    },
    {
     "name": "Reasoning-heavy tasks gain less or prefer fewer, more precise tokens",
@@ -3301,7 +3301,7 @@
     "failure_mode": "Write distortion"
    }
   ],
-  "basis": "The bit sweep at a fixed token count isolates write distortion (M). The token-for-precision gain is a same-budget policy comparison with no item-level evidence, so under rule 5 Addressing is I. The confound is that keeping more tokens also changes the competitor set. The pruners score tokens at prefill with the question in the prompt, so the writer is query-aware. Query knowledge is labelled by design: an observation-window scorer is proxy-query even when an evaluation puts the question inside the window. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'. Revision: the bit sweep at a fixed token count also lowers the bit budget, so Write distortion is U (Capacity, Write distortion), not M; the token-for-precision trade changes which tokens are kept and how precisely, so Addressing is U (Addressing, Write distortion). Query knowledge is labelled by design: the observation-window scorers are proxy-query.",
+  "basis": "The bit sweep at a fixed token count isolates write distortion (M). The token-for-precision gain is a same-budget policy comparison with no item-level evidence, so under rule 5 Addressing is I. The confound is that keeping more tokens also changes the competitor set. The pruners score tokens at prefill with the question in the prompt, so the writer is query-aware. Query knowledge is labelled by design: an observation-window scorer is proxy-query even when an evaluation puts the question inside the window. Revision: the study reports loss at a reduced budget against a larger one, which confounds Capacity, so Capacity is U, not '-'. Revision: the bit sweep at a fixed token count also lowers the bit budget, so Write distortion is U (Capacity, Write distortion), not M; the token-for-precision trade changes which tokens are kept and how precisely, so Addressing is U (Addressing, Write distortion). Query knowledge is labelled by design: the observation-window scorers are proxy-query. Revision (2026-10-26, review round): the token-for-precision findings change which tokens are kept and how precisely, so they are Unassigned (Addressing, Write distortion), matching the U cells and the text.",
   "read": "full text"
  },
  "zhang2026mixkvq": {
@@ -3326,8 +3326,8 @@
   "findings": [
    {
     "name": "MixKVQ near BF16 on Qwen-32B reasoning; 2-bit KIVI drops",
-    "term": "write",
-    "failure_mode": "Write distortion"
+    "term": "unassigned",
+    "failure_mode": "Unassigned"
    },
    {
     "name": "KVQuant collapses at 2-bit on reasoning (0 on AIME)",
@@ -3355,7 +3355,7 @@
     "failure_mode": "Unassigned"
    }
   ],
-  "basis": "The matched-bit key/value contrast isolates write distortion (M). The 2-bit reasoning collapse and error accumulation do not separate Capacity from Write distortion, so they are Unassigned, as in the draft table. Salience uses observed query-activation statistics as a stand-in for future reads, so despite the title the writer is proxy-query.",
+  "basis": "The matched-bit key/value contrast isolates write distortion (M). The 2-bit reasoning collapse and error accumulation do not separate Capacity from Write distortion, so they are Unassigned, as in the draft table. Salience uses observed query-activation statistics as a stand-in for future reads, so despite the title the writer is proxy-query. Revision (2026-10-26, review round): the 2-bit reasoning comparison against KIVI also lowers the bit budget, so it is Unassigned (Capacity, Write distortion), as the text says.",
   "read": "full text"
  },
  "thiswork": {

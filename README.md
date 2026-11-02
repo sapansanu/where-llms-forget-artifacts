@@ -116,7 +116,10 @@ were discarded, are not included here, and are not used in the paper.
 substrate, budget currency, operation codes (W/S/A/R), write-time query knowledge, and an evidence grade for each term.
 The grades are M (measured), B (bounded), I (inferred), U (unassigned) or "-" (not addressed). Each record also lists
 the findings filed under each term and the basis for its grades. `read` records whether the study was read in full or
-in abstract only. `literature/references.bib` is the paper's bibliography.
+in abstract only. Most findings carry the coarser failure-mode labels of an earlier version of the rules: "Addressing
+miss at retrieval" covers the paper's retrieval miss, positional under-use and selection shortfall, and "Addressing
+drift and staleness" is the paper's drift and staleness; the grades and the `basis` text follow the paper's rules
+(Section 2.2). `literature/references.bib` is the paper's bibliography.
 
 ## Grading check
 
